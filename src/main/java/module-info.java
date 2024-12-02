@@ -5,4 +5,6 @@ module ch.bosshard.matteo.todolist {
 
     opens ch.bosshard.matteo.todolist to javafx.fxml;
     exports ch.bosshard.matteo.todolist;
+    exports ch.bosshard.matteo.todolist.enums;
+    opens ch.bosshard.matteo.todolist.enums to javafx.fxml;
 }
