@@ -3,7 +3,9 @@ package ch.bosshard.matteo.todolist;
 import ch.bosshard.matteo.todolist.enums.ListCategory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ToDoList {
     private String listTitle;
@@ -13,13 +15,26 @@ public class ToDoList {
     private int completionPercentage;
     private String listColor;
 
+    Map<String, String> colorSwitcher = new HashMap<String, String>();
+
     public ToDoList(String listTitle, ListCategory listCategory, String listColor) {
         this.listTitle = listTitle;
         this.listCategory = listCategory;
         this.allTasks = new ArrayList<>();
         this.completedTasks = new ArrayList<>();
         this.completionPercentage = 0;
-        this.listColor = listColor;
+
+        colorSwitcher.put("Red", "#E63946");
+        colorSwitcher.put("Blue", "#457B9D");
+        colorSwitcher.put("Green", "#2A9D8F");
+        colorSwitcher.put("Yellow", "#E9C46A");
+        colorSwitcher.put("Purple", "#9D4EDD");
+        colorSwitcher.put("Orange", "#F4A261");
+        colorSwitcher.put("Pink", "#F28482");
+        colorSwitcher.put("Brown", "#8D6A9F");
+        colorSwitcher.put("Gray", "#A8DADC");
+
+        this.listColor = colorSwitcher.get(listColor);
     }
 
     // BASE METHODS

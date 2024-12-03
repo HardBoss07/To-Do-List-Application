@@ -18,16 +18,17 @@ public class HelloApplication extends Application {
 
     List<ToDoList> allLists = new ArrayList<>();
     VBox listGroup = new VBox(10);  // Use VBox to arrange the buttons vertically
+    Scene mainScene;
 
     // Start the main stage
     @Override
-    public void start(Stage stage) {
+    public void start(Stage mainStage) {
         // Title label
         Label label = new Label("To Do List App");
 
         // Create List Button
         Button createList = new Button("New List");
-        createList.setOnAction(e -> showCreateListPopup(stage));
+        createList.setOnAction(e -> showCreateListPopup(mainStage));
 
         // Layout for main stage
         VBox mainVBox = new VBox(10);
@@ -38,11 +39,13 @@ public class HelloApplication extends Application {
         mainHBox.getChildren().add(mainVBox);
 
         // Initial Scene setup
-        updateListGroup(stage);
+        updateListGroup(mainStage);
         Scene scene = new Scene(mainHBox, 350, 600);
-        stage.setTitle("To Do List App");
-        stage.setScene(scene);
-        stage.show();
+        mainStage.setTitle("To Do List App");
+        mainStage.setScene(scene);
+        mainStage.show();
+
+        mainScene = scene;
     }
 
     // Create list buttons
@@ -64,28 +67,26 @@ public class HelloApplication extends Application {
 
         button.setGraphic(content);
 
-        // Add click handler to open the list detail screen
         button.setOnAction(e -> showListDetail(stage, list));
 
         button.setUserData(list);
         return button;
     }
 
-    // Show the list detail screen when a list button is clicked
     private void showListDetail(Stage stage, ToDoList list) {
         VBox listDetailVBox = new VBox(10);
 
-        Label titleLabel = new Label(list.getListTitle() + " Details");
+        Label titleLabel = new Label(list.getListTitle());
         Button backButton = new Button("< Back");
         backButton.setOnAction(e -> {
             updateListGroup(stage);
-            stage.setScene(new Scene(listDetailVBox, 350, 600));
+            stage.setScene(mainScene);
         });
 
         Button addTaskButton = new Button("+ Add Task");
         addTaskButton.setOnAction(e -> showCreateTaskPopup(stage, list));
 
-        Label taskStatusLabel = new Label(list.getAllTasks().isEmpty() ? "No current tasks" : "Current Tasks:");
+        Label taskStatusLabel = new Label(list.getAllTasks().isEmpty() ? "No current tasks" : "Current Tasks (" + list.getAllTasks().size() + "):");
 
         VBox tasksVBox = new VBox(10);
         for (Task task : list.getAllTasks()) {
@@ -94,7 +95,6 @@ public class HelloApplication extends Application {
 
         listDetailVBox.getChildren().addAll(titleLabel, backButton, addTaskButton, taskStatusLabel, tasksVBox);
 
-        // Show the list detail screen
         Scene listDetailScene = new Scene(listDetailVBox, 350, 600);
         stage.setScene(listDetailScene);
     }
@@ -133,7 +133,6 @@ public class HelloApplication extends Application {
                 Task newTask = new Task(taskName, status, category, importance);
                 list.getAllTasks().add(newTask);
 
-                // After task is added, show list detail screen again
                 showListDetail(stage, list);
                 popupStage.close();
             }
@@ -190,7 +189,7 @@ public class HelloApplication extends Application {
 
         Label colorLabel = new Label("List Color:");
         ComboBox<String> colorComboBox = new ComboBox<>();
-        colorComboBox.getItems().addAll("Red", "Blue", "Green", "Yellow", "Purple", "Orange");
+        colorComboBox.getItems().addAll("Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Gray");
 
         Button createListButton = new Button("Create List");
         createListButton.setOnAction(e -> {
