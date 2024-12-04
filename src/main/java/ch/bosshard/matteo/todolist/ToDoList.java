@@ -37,6 +37,10 @@ public class ToDoList {
         this.listColor = colorSwitcher.get(listColor);
     }
 
+    public void updateCompletionPercentage() {
+        completionPercentage = allTasks.hashCode() / completedTasks.size() * 100;
+    }
+
     // BASE METHODS
     public String getListTitle() {
         return listTitle;

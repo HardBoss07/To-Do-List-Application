@@ -38,6 +38,9 @@ public class HelloApplication extends Application {
         mainHBox.setPadding(new Insets(0, 0, 0, 10));
         mainHBox.getChildren().add(mainVBox);
 
+        // Load example content
+        createExampleListWithTasks();
+
         // Initial Scene setup
         updateListGroup(mainStage);
         Scene scene = new Scene(mainHBox, 350, 600);
@@ -90,13 +93,39 @@ public class HelloApplication extends Application {
 
         VBox tasksVBox = new VBox(10);
         for (Task task : list.getAllTasks()) {
-            tasksVBox.getChildren().add(new Label(task.getTaskName()));
+            tasksVBox.getChildren().add(createTaskObject(task));
         }
 
         listDetailVBox.getChildren().addAll(titleLabel, backButton, addTaskButton, taskStatusLabel, tasksVBox);
 
         Scene listDetailScene = new Scene(listDetailVBox, 350, 600);
         stage.setScene(listDetailScene);
+    }
+
+    // Create Task button
+    private Button createTaskObject(Task task) {
+        Button button = new Button();
+
+        Label titleLabel = new Label(task.getTaskName());
+        Label categoryLabel = new Label(task.getTaskCategory().toString());
+        Label statusLabel = new Label(task.getTaskStatus().toString());
+        Label importanceLabel = new Label(task.getTaskImportance().toString());
+
+        HBox topLayer = new HBox(20, titleLabel, categoryLabel);
+        HBox bottomLayer = new HBox(20, statusLabel, importanceLabel);
+        VBox content = new VBox(10);
+        content.getChildren().addAll(topLayer, bottomLayer);
+
+        button.setGraphic(content);
+        button.setOnAction(e -> taskButtonAction(task));
+
+        button.setUserData(task);
+        return button;
+    }
+
+    // Task Button action
+    private void taskButtonAction(Task task) {
+        System.out.println(task.toString());
     }
 
     // Show the popup for creating a new task
@@ -222,6 +251,17 @@ public class HelloApplication extends Application {
         Scene popupScene = new Scene(popupLayout, 300, 200);
         popupStage.setScene(popupScene);
         popupStage.show();
+    }
+
+    private void createExampleListWithTasks() {
+        ToDoList list = new ToDoList("Example List", ListCategory.PROFESSIONAL, "Red");
+        Task task1 = new Task("Write Project description", TaskStatus.COMPLETED, TaskCategory.WORK, TaskImportance.HIGH);
+        Task task2 = new Task("Clean out my drawer", TaskStatus.NOT_STARTED, TaskCategory.MISCELLANEOUS, TaskImportance.OPTIONAL);
+        Task task3 = new Task("Drink 0.5L per hour", TaskStatus.IN_PROGRESS, TaskCategory.HEALTH, TaskImportance.ESSENTIAL);
+        list.getAllTasks().add(task1);
+        list.getAllTasks().add(task2);
+        list.getAllTasks().add(task3);
+        allLists.add(list);
     }
 
     public static void main(String[] args) {
