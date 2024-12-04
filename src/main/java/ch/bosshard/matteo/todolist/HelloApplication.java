@@ -55,9 +55,8 @@ public class HelloApplication extends Application {
     private Button createListObject(ToDoList list, Stage stage) {
         Button button = new Button();
 
-        double stageWidth = stage.getWidth();
-        button.setPrefWidth(stageWidth * 0.9);
-        button.setPrefHeight(button.getPrefWidth() / 6);
+        button.setPrefWidth(330);
+        button.setPrefHeight(52);
 
         Label titleLabel = new Label(list.getListTitle());
         Label categoryLabel = new Label(list.getListCategory().toString());
@@ -93,18 +92,25 @@ public class HelloApplication extends Application {
 
         VBox tasksVBox = new VBox(10);
         for (Task task : list.getAllTasks()) {
-            tasksVBox.getChildren().add(createTaskObject(task));
+            tasksVBox.getChildren().add(createTaskObject(task, stage, list));
         }
 
         listDetailVBox.getChildren().addAll(titleLabel, backButton, addTaskButton, taskStatusLabel, tasksVBox);
 
-        Scene listDetailScene = new Scene(listDetailVBox, 350, 600);
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(listDetailVBox);
+
+        Scene listDetailScene = new Scene(layout, 350, 600);
         stage.setScene(listDetailScene);
     }
 
     // Create Task button
-    private Button createTaskObject(Task task) {
+    private Button createTaskObject(Task task, Stage stage, ToDoList list) {
         Button button = new Button();
+
+        button.setPrefWidth(330);
+        button.setPrefHeight(52);
 
         Label titleLabel = new Label(task.getTaskName());
         Label categoryLabel = new Label(task.getTaskCategory().toString());
@@ -117,15 +123,76 @@ public class HelloApplication extends Application {
         content.getChildren().addAll(topLayer, bottomLayer);
 
         button.setGraphic(content);
-        button.setOnAction(e -> taskButtonAction(task));
+        button.setOnAction(e -> taskButtonAction(task, stage, list));
 
         button.setUserData(task);
         return button;
     }
 
     // Task Button action
-    private void taskButtonAction(Task task) {
+    private void taskButtonAction(Task task, Stage stage, ToDoList list) {
         System.out.println(task.toString());
+
+        Stage editTaskStage = new Stage();
+        editTaskStage.setTitle("Edit " + task.getTaskName());
+
+        // Input fields
+        Label titleLabel = new Label("Task Name: ");
+        TextField titleTextField = new TextField();
+
+        Label statusLabel = new Label("Status: ");
+        ComboBox<TaskStatus> statusComboBox = new ComboBox<>();
+        statusComboBox.getItems().addAll(TaskStatus.values());
+        statusComboBox.setValue(task.getTaskStatus());
+
+        Label categoryLabel = new Label("Category: ");
+        ComboBox<TaskCategory> categoryComboBox = new ComboBox<>();
+        categoryComboBox.getItems().addAll(TaskCategory.values());
+        categoryComboBox.setValue(task.getTaskCategory());
+
+        Label importanceLabel = new Label("Importance: ");
+        ComboBox<TaskImportance> importanceComboBox = new ComboBox<>();
+        importanceComboBox.getItems().addAll(TaskImportance.values());
+        importanceComboBox.setValue(task.getTaskImportance());
+
+        Button saveButton = new Button("Save changes");
+        saveButton.setOnAction(e -> {
+            String newTitle = titleTextField.getText();
+            TaskStatus newStatus = statusComboBox.getValue();
+            TaskCategory newCategory = categoryComboBox.getValue();
+            TaskImportance newImportance = importanceComboBox.getValue();
+
+            if (newTitle.isEmpty()) newTitle = task.getTaskName();
+
+            task.setTaskName(newTitle);
+            task.setTaskStatus(newStatus);
+            task.setTaskCategory(newCategory);
+            task.setTaskImportance(newImportance);
+            editTaskStage.close();
+            showListDetail(stage, list);
+        });
+
+        // Layout
+        GridPane editTaskGrid = new GridPane();
+        editTaskGrid.setHgap(10);
+        editTaskGrid.setVgap(10);
+        editTaskGrid.add(titleLabel, 0, 0);
+        editTaskGrid.add(titleTextField, 1, 0);
+        editTaskGrid.add(statusLabel, 0, 1);
+        editTaskGrid.add(statusComboBox, 1, 1);
+        editTaskGrid.add(categoryLabel, 0, 2);
+        editTaskGrid.add(categoryComboBox, 1, 2);
+        editTaskGrid.add(importanceLabel, 0, 3);
+        editTaskGrid.add(importanceComboBox, 1, 3);
+        editTaskGrid.add(saveButton, 0, 4);
+
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(editTaskGrid);
+
+        Scene editTaskScene = new Scene(layout, 300, 250);
+        editTaskStage.setScene(editTaskScene);
+        editTaskStage.show();
     }
 
     // Show the popup for creating a new task
@@ -181,7 +248,11 @@ public class HelloApplication extends Application {
         taskCreationLayout.add(importanceComboBox, 1, 3);
         taskCreationLayout.add(createTaskButton, 0, 4);
 
-        Scene popupScene = new Scene(taskCreationLayout, 300, 250);
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(taskCreationLayout);
+
+        Scene popupScene = new Scene(layout, 300, 250);
         popupStage.setScene(popupScene);
         popupStage.show();
     }
@@ -248,7 +319,11 @@ public class HelloApplication extends Application {
         popupLayout.add(colorComboBox, 1, 2);
         popupLayout.add(createListButton, 1, 3);
 
-        Scene popupScene = new Scene(popupLayout, 300, 200);
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(popupLayout);
+
+        Scene popupScene = new Scene(layout, 300, 200);
         popupStage.setScene(popupScene);
         popupStage.show();
     }
