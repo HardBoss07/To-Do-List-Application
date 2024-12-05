@@ -1,0 +1,80 @@
+/* General style for the scene */
+.root {
+    -fx-background-color: #f0f0f0;
+    -fx-font-family: "Verdana", sans-serif;
+}
+
+/* Title label */
+.title-label {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3b3b3b;
+    -fx-padding: 5px 0;
+}
+
+/* General button styling */
+.button {
+    -fx-font-size: 18px;
+    -fx-pref-width: 330px;
+    -fx-pref-height: 25px;
+    -fx-background-color: #c2c2c2;
+    -fx-text-fill: #3b3b3b;
+    -fx-border-width: 2px;
+    -fx-border-color: #3b3b3b;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+    -fx-padding: 10px;
+    -fx-alignment: center-left;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2px;
+}
+.button:hover {
+    -fx-background-color: #8c8c8c;
+}
+.button:pressed {
+    -fx-background-color: #6e6e6e;
+    -fx-border-color: #4a4a4a;
+}
+
+/* Create new To Do List Button */
+.create-list-button {
+    -fx-font-style: italic;
+}
+
+/* Create new To Do List popup */
+.list-popup {
+    -fx-background-color: #f0f0f0;
+    -fx-font-family: "Verdana", sans-serif;
+    -fx-font-size: 14;
+}
+.list-popup.label {
+    -fx-max-width: 140px;
+}
+.list-popup.text-field {
+    -fx-background-color: #e6e6e6;
+    -fx-border-width: 1px;
+    -fx-border-color: #4a4a4a;
+    -fx-border-radius: 2px;
+}
+.list-popup.combo-box {
+    -fx-background-color: #e6e6e6;
+    -fx-border-width: 1px;
+    -fx-border-color: #4a4a4a;
+    -fx-border-radius: 2px;
+    -fx-font-style: italic;
+}
+.list-popup.button {
+    -fx-background-color: #c2c2c2;
+    -fx-pref-width: 280px;
+}
+.list-popup.button:hover {
+    -fx-background-color: #8c8c8c;
+}
+.list-popup.button:pressed {
+    -fx-background-color: #6e6e6e;
+    -fx-border-color: #4a4a4a;
+}
+
+/* To Do List Button */
+
+/* Detailed view of To Do List */

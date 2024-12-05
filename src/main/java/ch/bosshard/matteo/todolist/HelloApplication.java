@@ -32,10 +32,12 @@ public class HelloApplication extends Application {
     public void start(Stage mainStage) {
         // Title label
         Label label = new Label("To Do List App");
+        label.getStyleClass().add("title-label");
 
         // Create List Button
-        Button createList = new Button("New List");
+        Button createList = new Button("Create a New List");
         createList.setOnAction(e -> showCreateListPopup(mainStage));
+        createList.getStyleClass().add("create-list-button");
 
         // Layout for main stage
         VBox mainVBox = new VBox(10);
@@ -51,6 +53,7 @@ public class HelloApplication extends Application {
         // Initial Scene setup
         updateListGroup(mainStage);
         Scene scene = new Scene(mainHBox, 350, 600);
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         mainStage.setTitle("To Do List App");
         mainStage.setScene(scene);
         mainStage.show();
@@ -280,6 +283,7 @@ public class HelloApplication extends Application {
         layout.getChildren().add(taskCreationLayout);
 
         Scene popupScene = new Scene(layout, 300, 250);
+        popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         popupStage.setScene(popupScene);
         popupStage.show();
     }
@@ -308,14 +312,20 @@ public class HelloApplication extends Application {
 
         // Input fields for creating a new list
         Label titleLabel = new Label("List Title:");
+        titleLabel.getStyleClass().add("list-popup");
         TextField titleField = new TextField();
+        titleField.getStyleClass().add("list-popup");
 
         Label listCategoryLabel = new Label("List Category:");
+        listCategoryLabel.getStyleClass().add("list-popup");
         ComboBox<ListCategory> listCategoryComboBox = new ComboBox<>();
+        listCategoryComboBox.getStyleClass().add("list-popup");
         listCategoryComboBox.getItems().addAll(ListCategory.values());
 
         Label colorLabel = new Label("List Color:");
+        colorLabel.getStyleClass().add("list-popup");
         ComboBox<HBox> colorComboBox = new ComboBox<>();
+        colorComboBox.getStyleClass().add("list-popup");
         String[] colorOptions = {
                 "Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Gray"
         };
@@ -325,6 +335,7 @@ public class HelloApplication extends Application {
         }
 
         Button createListButton = new Button("Create List");
+        createListButton.getStyleClass().add("list-popup");
         createListButton.setOnAction(e -> {
             String listTitle = titleField.getText();
             ListCategory listCategory = listCategoryComboBox.getValue();
@@ -355,8 +366,10 @@ public class HelloApplication extends Application {
         HBox layout = new HBox(10);
         layout.setPadding(new Insets(0, 0, 0, 10));
         layout.getChildren().add(popupLayout);
+        layout.getStyleClass().add("list-popup");
 
         Scene popupScene = new Scene(layout, 300, 200);
+        popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         popupStage.setScene(popupScene);
         popupStage.show();
     }
