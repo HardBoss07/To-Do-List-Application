@@ -7,12 +7,14 @@ import ch.bosshard.matteo.todolist.enums.TaskStatus;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -313,14 +315,20 @@ public class HelloApplication extends Application {
         listCategoryComboBox.getItems().addAll(ListCategory.values());
 
         Label colorLabel = new Label("List Color:");
-        ComboBox<String> colorComboBox = new ComboBox<>();
-        colorComboBox.getItems().addAll("Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Gray");
+        ComboBox<HBox> colorComboBox = new ComboBox<>();
+        String[] colorOptions = {
+                "Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Gray"
+        };
+
+        for (String colorOption : colorOptions) {
+            colorComboBox.getItems().add(createColorObject(colorOption));
+        }
 
         Button createListButton = new Button("Create List");
         createListButton.setOnAction(e -> {
             String listTitle = titleField.getText();
             ListCategory listCategory = listCategoryComboBox.getValue();
-            String listColor = colorComboBox.getValue();
+            String listColor = colorComboBox.getValue().getUserData().toString();
 
             if (listTitle.isEmpty() || listCategory == null || listColor == null) {
                 showAlert("Error", "Please enter a valid title, a valid category and color!");
@@ -351,6 +359,35 @@ public class HelloApplication extends Application {
         Scene popupScene = new Scene(layout, 300, 200);
         popupStage.setScene(popupScene);
         popupStage.show();
+    }
+
+    private HBox createColorObject(String color) {
+        HBox hBox = new HBox(5);
+        hBox.setUserData(color);
+
+        Rectangle colorRect = new Rectangle(10, 10);
+        colorRect.setFill(Color.web(getHexColorFromString(color)));
+
+        Label colorLabel = new Label(color);
+
+        hBox.getChildren().addAll(colorRect, colorLabel);
+
+        return hBox;
+    }
+
+    private String getHexColorFromString(String color) {
+        return switch (color) {
+            case "Red" -> "#E63946";
+            case "Blue" -> "#457B9D";
+            case "Green" -> "#2A9D8F";
+            case "Yellow" -> "#E9C46A";
+            case "Purple" -> "#9D4EDD";
+            case "Orange" -> "#F4A261";
+            case "Pink" -> "#F28482";
+            case "Brown" -> "#BD7013";
+            case "Gray" -> "#D4D4D4";
+            default -> "#FFFFFF";
+        };
     }
 
     private void createExampleListWithTasks() {

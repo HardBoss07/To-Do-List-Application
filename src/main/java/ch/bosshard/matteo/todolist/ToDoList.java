@@ -31,8 +31,8 @@ public class ToDoList {
         colorSwitcher.put("Purple", "#9D4EDD");
         colorSwitcher.put("Orange", "#F4A261");
         colorSwitcher.put("Pink", "#F28482");
-        colorSwitcher.put("Brown", "#8D6A9F");
-        colorSwitcher.put("Gray", "#A8DADC");
+        colorSwitcher.put("Brown", "#BD7013");
+        colorSwitcher.put("Gray", "#D4D4D4");
 
         this.listColor = colorSwitcher.get(listColor);
     }
