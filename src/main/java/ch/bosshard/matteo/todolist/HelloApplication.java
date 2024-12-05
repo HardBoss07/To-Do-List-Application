@@ -64,7 +64,7 @@ public class HelloApplication extends Application {
         button.setPrefHeight(52);
 
         Label titleLabel = new Label(list.getListTitle());
-        Label categoryLabel = new Label(list.getListCategory().toString());
+        Label categoryLabel = new Label(list.getListCategory().toFormattedString());
         Label tasksLabel = new Label(list.getAllTasks().size() + " Tasks");
         Label completionLabel = new Label(list.getCompletedTasks().size() + "/" + list.getAllTasks().size() + " (" + list.getCompletionPercentage() + "%)");
 
@@ -98,8 +98,6 @@ public class HelloApplication extends Application {
         VBox tasksVBox = new VBox(10);
         for (Task task : list.getAllTasks()) {
             tasksVBox.getChildren().add(createTaskObject(task, stage, list));
-            CheckBox checkBox = (CheckBox) tasksVBox.getChildren().getLast().getUserData();
-
         }
 
         listDetailVBox.getChildren().addAll(titleLabel, backButton, addTaskButton, taskStatusLabel, tasksVBox);
@@ -125,9 +123,9 @@ public class HelloApplication extends Application {
         button.setPrefWidth(310);
         button.setPrefHeight(52);
         Label titleLabel = new Label(task.getTaskName());
-        Label categoryLabel = new Label(task.getTaskCategory().toString());
-        Label statusLabel = new Label(task.getTaskStatus().toString());
-        Label importanceLabel = new Label(task.getTaskImportance().toString());
+        Label categoryLabel = new Label(task.getTaskCategory().toFormattedString());
+        Label statusLabel = new Label(task.getTaskStatus().toFormattedString());
+        Label importanceLabel = new Label(task.getTaskImportance().toFormattedString());
 
         HBox topLayer = new HBox(20, titleLabel, categoryLabel);
         HBox bottomLayer = new HBox(20, statusLabel, importanceLabel);
@@ -145,7 +143,7 @@ public class HelloApplication extends Application {
             } else {
                 task.setTaskStatus(TaskStatus.NOT_STARTED);
             }
-            statusLabel.setText(task.getTaskStatus().toString());
+            statusLabel.setText(task.getTaskStatus().toFormattedString());
         });
         VBox checkBoxVBox = new VBox(checkBox);
         checkBoxVBox.setAlignment(Pos.CENTER);
