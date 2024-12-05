@@ -6,11 +6,16 @@ import ch.bosshard.matteo.todolist.enums.TaskImportance;
 import ch.bosshard.matteo.todolist.enums.TaskStatus;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,6 +98,8 @@ public class HelloApplication extends Application {
         VBox tasksVBox = new VBox(10);
         for (Task task : list.getAllTasks()) {
             tasksVBox.getChildren().add(createTaskObject(task, stage, list));
+            CheckBox checkBox = (CheckBox) tasksVBox.getChildren().getLast().getUserData();
+
         }
 
         listDetailVBox.getChildren().addAll(titleLabel, backButton, addTaskButton, taskStatusLabel, tasksVBox);
@@ -106,12 +113,17 @@ public class HelloApplication extends Application {
     }
 
     // Create Task button
-    private Button createTaskObject(Task task, Stage stage, ToDoList list) {
+    private BorderPane createTaskObject(Task task, Stage stage, ToDoList list) {
         Button button = new Button();
+        BorderPane borderPane = new BorderPane();
+        CheckBox checkBox = new CheckBox();
 
-        button.setPrefWidth(330);
+        borderPane.setPrefWidth(330);
+        borderPane.setPrefHeight(52);
+
+        // Button to the right
+        button.setPrefWidth(310);
         button.setPrefHeight(52);
-
         Label titleLabel = new Label(task.getTaskName());
         Label categoryLabel = new Label(task.getTaskCategory().toString());
         Label statusLabel = new Label(task.getTaskStatus().toString());
@@ -124,9 +136,24 @@ public class HelloApplication extends Application {
 
         button.setGraphic(content);
         button.setOnAction(e -> taskButtonAction(task, stage, list));
-
         button.setUserData(task);
-        return button;
+
+        // Checkbox to the left
+        checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                task.setTaskStatus(TaskStatus.COMPLETED);
+            } else {
+                task.setTaskStatus(TaskStatus.NOT_STARTED);
+            }
+            statusLabel.setText(task.getTaskStatus().toString());
+        });
+        VBox checkBoxVBox = new VBox(checkBox);
+        checkBoxVBox.setAlignment(Pos.CENTER);
+
+        borderPane.setLeft(checkBoxVBox);
+        borderPane.setRight(button);
+        borderPane.setUserData(checkBox);
+        return borderPane;
     }
 
     // Task Button action
