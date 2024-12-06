@@ -7,6 +7,9 @@ import ch.bosshard.matteo.todolist.enums.TaskStatus;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.HPos;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -104,7 +107,9 @@ public class HelloApplication extends Application {
         VBox listDetailVBox = new VBox(10);
 
         Label titleLabel = new Label(list.getListTitle());
+        titleLabel.getStyleClass().add("list-title");
         Button backButton = new Button("< Back");
+        backButton.getStyleClass().add("task-buttons");
         backButton.setOnAction(e -> {
             updateListGroup(stage);
             stage.setScene(mainScene);
@@ -112,21 +117,29 @@ public class HelloApplication extends Application {
 
         Button addTaskButton = new Button("+ Add Task");
         addTaskButton.setOnAction(e -> showCreateTaskPopup(stage, list));
+        addTaskButton.getStyleClass().add("task-buttons");
+
+        HBox buttons = new HBox(backButton, addTaskButton);
+        buttons.setSpacing(5);
+        buttons.setMaxHeight(330);
+        buttons.setPadding(new Insets(0, 10, 0, 0));
 
         Label taskStatusLabel = new Label(list.getAllTasks().isEmpty() ? "No current tasks" : "Current Tasks (" + list.getAllTasks().size() + "):");
+        taskStatusLabel.getStyleClass().add("list-detail");
 
         VBox tasksVBox = new VBox(10);
         for (Task task : list.getAllTasks()) {
             tasksVBox.getChildren().add(createTaskObject(task, stage, list));
         }
 
-        listDetailVBox.getChildren().addAll(titleLabel, backButton, addTaskButton, taskStatusLabel, tasksVBox);
+        listDetailVBox.getChildren().addAll(titleLabel, buttons, taskStatusLabel, tasksVBox);
 
         HBox layout = new HBox(10);
         layout.setPadding(new Insets(0, 0, 0, 10));
         layout.getChildren().add(listDetailVBox);
 
         Scene listDetailScene = new Scene(layout, 350, 600);
+        listDetailScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         stage.setScene(listDetailScene);
     }
 
@@ -143,18 +156,37 @@ public class HelloApplication extends Application {
         button.setPrefWidth(310);
         button.setPrefHeight(52);
         Label titleLabel = new Label(task.getTaskName());
-        Label categoryLabel = new Label(task.getTaskCategory().toFormattedString());
+        HBox categoryLabel = createDotNextToCategory(task.getBackgroundColor(), task.getTaskCategory().toFormattedString());
         Label statusLabel = new Label(task.getTaskStatus().toFormattedString());
         Label importanceLabel = new Label(task.getTaskImportance().toFormattedString());
 
-        HBox topLayer = new HBox(20, titleLabel, categoryLabel);
-        HBox bottomLayer = new HBox(20, statusLabel, importanceLabel);
-        VBox content = new VBox(10);
-        content.getChildren().addAll(topLayer, bottomLayer);
+        titleLabel.getStyleClass().add("task-title");
+        categoryLabel.getStyleClass().add("task-category");
+        statusLabel.getStyleClass().add("task-status");
+        importanceLabel.getStyleClass().add("task-importance");
+
+        categoryLabel.setMaxWidth(Double.MAX_VALUE);
+        categoryLabel.setAlignment(Pos.CENTER_RIGHT);
+        statusLabel.setMaxWidth(Double.MAX_VALUE);
+        statusLabel.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox leftSide = new VBox(10);
+        VBox rightSide = new VBox(10);
+
+        leftSide.getChildren().addAll(titleLabel, statusLabel);
+        leftSide.setAlignment(Pos.CENTER_LEFT);
+        rightSide.getChildren().addAll(categoryLabel, importanceLabel);
+        rightSide.setAlignment(Pos.CENTER_RIGHT);
+        HBox.setHgrow(rightSide, Priority.ALWAYS);
+
+        HBox content = new HBox(10);
+        content.getChildren().addAll(leftSide, rightSide);
 
         button.setGraphic(content);
         button.setOnAction(e -> taskButtonAction(task, stage, list));
         button.setUserData(task);
+        button.getStyleClass().add("task-object");
+        checkBox.getStyleClass().add("task-object");
 
         // Checkbox to the left
         checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
@@ -166,11 +198,18 @@ public class HelloApplication extends Application {
             statusLabel.setText(task.getTaskStatus().toFormattedString());
         });
         VBox checkBoxVBox = new VBox(checkBox);
-        checkBoxVBox.setAlignment(Pos.CENTER);
+        checkBoxVBox.setPadding(new Insets(0, 0, 0, 10));
+        checkBoxVBox.setAlignment(Pos.CENTER_LEFT);
+        checkBoxVBox.getStyleClass().add("task-left");
+        VBox buttonVBox = new VBox(button);
+        buttonVBox.getStyleClass().add("task-right");
 
         borderPane.setLeft(checkBoxVBox);
-        borderPane.setRight(button);
+        borderPane.setRight(buttonVBox);
+        borderPane.setMaxWidth(330);
         borderPane.setUserData(checkBox);
+        borderPane.setPrefWidth(330);
+        borderPane.getStyleClass().add("task-object");
         return borderPane;
     }
 
@@ -377,6 +416,22 @@ public class HelloApplication extends Application {
         popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         popupStage.setScene(popupScene);
         popupStage.show();
+    }
+
+    private HBox createDotNextToCategory(String color, String category) {
+        HBox hBox = new HBox(5);
+        hBox.setUserData(color);
+        Circle circle = new Circle(4);
+        circle.setFill(Color.web(color));
+        circle.setStroke(Color.web("#3b3b3b"));
+        circle.setStrokeWidth(1);
+
+        Label label = new Label(category);
+        label.getStyleClass().add("task-category");
+
+        hBox.getChildren().addAll(circle, label);
+
+        return hBox;
     }
 
     private HBox createColorObject(String color) {
