@@ -46,15 +46,21 @@
     -fx-background-color: #f0f0f0;
     -fx-font-family: "Verdana", sans-serif;
     -fx-font-size: 14;
+    -fx-text-fill: #3b3b3b;
 }
 .list-popup.label {
     -fx-max-width: 140px;
+    -fx-font-style: italic;
 }
 .list-popup.text-field {
     -fx-background-color: #e6e6e6;
     -fx-border-width: 1px;
     -fx-border-color: #4a4a4a;
     -fx-border-radius: 2px;
+    -fx-font-style: italic;
+}
+.list-popup.text-field:hover {
+    -fx-background-color: #8c8c8c;
 }
 .list-popup.combo-box {
     -fx-background-color: #e6e6e6;
@@ -62,6 +68,18 @@
     -fx-border-color: #4a4a4a;
     -fx-border-radius: 2px;
     -fx-font-style: italic;
+}
+.list-popup.combo-box.list-cell:hover {
+    -fx-background-color: #8c8c8c;
+}
+.list-popup.combo-box.list-cell:filled:selected {
+    -fx-background-color: #8c8c8c;
+}
+.list-popup.combo-box.list-cell:focused {
+    -fx-background-color: #8c8c8c;
+}
+.list-popup.combo-box:hover {
+    -fx-background-color: #8c8c8c;
 }
 .list-popup.button {
     -fx-background-color: #c2c2c2;
@@ -76,5 +94,12 @@
 }
 
 /* To Do List Button */
-
+.list-detail {
+    -fx-font-size: 16px;
+    -fx-text-fill: #3b3b3b;
+    -fx-background-radius: 4px;
+}
+.list-detail:hover {
+    -fx-background-color: darker;
+}
 /* Detailed view of To Do List */
