@@ -231,16 +231,19 @@ public class HelloApplication extends Application {
         statusComboBox.getItems().addAll(TaskStatus.values());
         statusComboBox.setValue(task.getTaskStatus());
         statusComboBox.setPromptText("Current Status");
+        statusComboBox.setConverter(new EnumStringConverter<>());
 
         ComboBox<TaskCategory> categoryComboBox = new ComboBox<>();
         categoryComboBox.getItems().addAll(TaskCategory.values());
         categoryComboBox.setValue(task.getTaskCategory());
         categoryComboBox.setPromptText("Task Category");
+        categoryComboBox.setConverter(new EnumStringConverter<>());
 
         ComboBox<TaskImportance> importanceComboBox = new ComboBox<>();
         importanceComboBox.getItems().addAll(TaskImportance.values());
         importanceComboBox.setValue(task.getTaskImportance());
         importanceComboBox.setPromptText("Task Importance");
+        importanceComboBox.setConverter(new EnumStringConverter<>());
 
         Button saveButton = new Button("Save changes");
         saveButton.setOnAction(e -> {
@@ -292,14 +295,17 @@ public class HelloApplication extends Application {
         ComboBox<TaskStatus> statusComboBox = new ComboBox<>();
         statusComboBox.setPromptText("Current Status");
         statusComboBox.getItems().addAll(TaskStatus.values());
+        statusComboBox.setConverter(new EnumStringConverter<>());
 
         ComboBox<TaskCategory> categoryComboBox = new ComboBox<>();
         categoryComboBox.setPromptText("Task Category");
         categoryComboBox.getItems().addAll(TaskCategory.values());
+        categoryComboBox.setConverter(new EnumStringConverter<>());
 
         ComboBox<TaskImportance> importanceComboBox = new ComboBox<>();
         importanceComboBox.setPromptText("Task Importance");
         importanceComboBox.getItems().addAll(TaskImportance.values());
+        importanceComboBox.setConverter(new EnumStringConverter<>());
 
         Button createTaskButton = new Button("Create Task");
         createTaskButton.setOnAction(e -> {
@@ -373,6 +379,7 @@ public class HelloApplication extends Application {
         listCategoryComboBox.setPromptText("Select a category");
         listCategoryComboBox.getStyleClass().add("list-popup");
         listCategoryComboBox.getItems().addAll(ListCategory.values());
+        listCategoryComboBox.setConverter(new EnumStringConverter<>());
 
         ComboBox<HBox> colorComboBox = new ComboBox<>();
         colorComboBox.setPromptText("Select a color");
