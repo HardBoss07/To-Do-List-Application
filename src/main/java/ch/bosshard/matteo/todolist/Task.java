@@ -33,6 +33,10 @@ public class Task {
         backgroundColor = backgroundColorMap.get(taskCategory);
     }
 
+    public void updateColor() {
+        backgroundColor = backgroundColorMap.get(taskCategory);
+    }
+
     // BASE METHODS
     public String getTaskName() {
         return taskName;

@@ -1,7 +1,9 @@
 package ch.bosshard.matteo.todolist;
 
 import ch.bosshard.matteo.todolist.enums.ListCategory;
+import ch.bosshard.matteo.todolist.enums.TaskStatus;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,7 @@ public class ToDoList {
     private List<Task> allTasks;
     private List<Task> completedTasks;
     private ListCategory listCategory;
-    private int completionPercentage;
+    private double completionPercentage;
     private String listColor;
 
     Map<String, String> colorSwitcher = new HashMap<String, String>();
@@ -38,7 +40,14 @@ public class ToDoList {
     }
 
     public void updateCompletionPercentage() {
-        completionPercentage = allTasks.hashCode() / completedTasks.size() * 100;
+        completedTasks.clear();
+        for (Task task : allTasks) {
+            if (task.getTaskStatus() == TaskStatus.COMPLETED) completedTasks.add(task);
+        }
+        DecimalFormat df = new DecimalFormat("#.#");
+        completionPercentage = Double.parseDouble(df.format((double) completedTasks.size() / allTasks.size() * 100));
+
+        if (Double.isNaN(completionPercentage)) completionPercentage = 0;
     }
 
     // BASE METHODS
@@ -74,11 +83,11 @@ public class ToDoList {
         this.listCategory = listCategory;
     }
 
-    public int getCompletionPercentage() {
+    public double getCompletionPercentage() {
         return completionPercentage;
     }
 
-    public void setCompletionPercentage(int completionPercentage) {
+    public void setCompletionPercentage(double completionPercentage) {
         this.completionPercentage = completionPercentage;
     }
 

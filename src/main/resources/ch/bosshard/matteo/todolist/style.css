@@ -47,6 +47,8 @@
     -fx-font-family: "Verdana", sans-serif;
     -fx-font-size: 14;
     -fx-text-fill: #3b3b3b;
+    -fx-pref-width: 280px;
+    -fx-pref-height: 18px;
 }
 .list-popup.label {
     -fx-max-width: 140px;
@@ -83,7 +85,6 @@
 }
 .list-popup.button {
     -fx-background-color: #c2c2c2;
-    -fx-pref-width: 280px;
 }
 .list-popup.button:hover {
     -fx-background-color: #8c8c8c;

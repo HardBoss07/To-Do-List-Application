@@ -197,6 +197,10 @@ public class HelloApplication extends Application {
             }
             statusLabel.setText(task.getTaskStatus().toFormattedString());
         });
+
+        if (task.getTaskStatus() == TaskStatus.NOT_STARTED || task.getTaskStatus() == TaskStatus.IN_PROGRESS) checkBox.setSelected(false);
+        else checkBox.setSelected(true);
+
         VBox checkBoxVBox = new VBox(checkBox);
         checkBoxVBox.setPadding(new Insets(0, 0, 0, 10));
         checkBoxVBox.setAlignment(Pos.CENTER_LEFT);
@@ -221,23 +225,22 @@ public class HelloApplication extends Application {
         editTaskStage.setTitle("Edit " + task.getTaskName());
 
         // Input fields
-        Label titleLabel = new Label("Task Name: ");
-        TextField titleTextField = new TextField();
+        TextField titleTextField = new TextField(task.getTaskName());
 
-        Label statusLabel = new Label("Status: ");
         ComboBox<TaskStatus> statusComboBox = new ComboBox<>();
         statusComboBox.getItems().addAll(TaskStatus.values());
         statusComboBox.setValue(task.getTaskStatus());
+        statusComboBox.setPromptText("Current Status");
 
-        Label categoryLabel = new Label("Category: ");
         ComboBox<TaskCategory> categoryComboBox = new ComboBox<>();
         categoryComboBox.getItems().addAll(TaskCategory.values());
         categoryComboBox.setValue(task.getTaskCategory());
+        categoryComboBox.setPromptText("Task Category");
 
-        Label importanceLabel = new Label("Importance: ");
         ComboBox<TaskImportance> importanceComboBox = new ComboBox<>();
         importanceComboBox.getItems().addAll(TaskImportance.values());
         importanceComboBox.setValue(task.getTaskImportance());
+        importanceComboBox.setPromptText("Task Importance");
 
         Button saveButton = new Button("Save changes");
         saveButton.setOnAction(e -> {
@@ -252,29 +255,28 @@ public class HelloApplication extends Application {
             task.setTaskStatus(newStatus);
             task.setTaskCategory(newCategory);
             task.setTaskImportance(newImportance);
+            task.updateColor();
             editTaskStage.close();
             showListDetail(stage, list);
         });
 
+        titleTextField.getStyleClass().add("list-popup");
+        statusComboBox.getStyleClass().add("list-popup");
+        categoryComboBox.getStyleClass().add("list-popup");
+        importanceComboBox.getStyleClass().add("list-popup");
+        saveButton.getStyleClass().add("list-popup");
+
         // Layout
-        GridPane editTaskGrid = new GridPane();
-        editTaskGrid.setHgap(10);
-        editTaskGrid.setVgap(10);
-        editTaskGrid.add(titleLabel, 0, 0);
-        editTaskGrid.add(titleTextField, 1, 0);
-        editTaskGrid.add(statusLabel, 0, 1);
-        editTaskGrid.add(statusComboBox, 1, 1);
-        editTaskGrid.add(categoryLabel, 0, 2);
-        editTaskGrid.add(categoryComboBox, 1, 2);
-        editTaskGrid.add(importanceLabel, 0, 3);
-        editTaskGrid.add(importanceComboBox, 1, 3);
-        editTaskGrid.add(saveButton, 0, 4);
+        VBox mainVBox = new VBox(10);
+        mainVBox.getChildren().addAll(titleTextField, statusComboBox, categoryComboBox, importanceComboBox, saveButton);
 
         HBox layout = new HBox(10);
         layout.setPadding(new Insets(0, 0, 0, 10));
-        layout.getChildren().add(editTaskGrid);
+        layout.getChildren().add(mainVBox);
+        layout.getStyleClass().add("list-popup");
 
-        Scene editTaskScene = new Scene(layout, 300, 250);
+        Scene editTaskScene = new Scene(layout, 300, 210);
+        editTaskScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         editTaskStage.setScene(editTaskScene);
         editTaskStage.show();
     }
@@ -285,19 +287,18 @@ public class HelloApplication extends Application {
         popupStage.setTitle("Create Task");
 
         // Input fields
-        Label taskNameLabel = new Label("Task Name:");
-        TextField taskNameField = new TextField();
+        TextField taskNameField = new TextField("Task Name");
 
-        Label statusLabel = new Label("Status:");
         ComboBox<TaskStatus> statusComboBox = new ComboBox<>();
+        statusComboBox.setPromptText("Current Status");
         statusComboBox.getItems().addAll(TaskStatus.values());
 
-        Label categoryLabel = new Label("Category:");
         ComboBox<TaskCategory> categoryComboBox = new ComboBox<>();
+        categoryComboBox.setPromptText("Task Category");
         categoryComboBox.getItems().addAll(TaskCategory.values());
 
-        Label importanceLabel = new Label("Importance:");
         ComboBox<TaskImportance> importanceComboBox = new ComboBox<>();
+        importanceComboBox.setPromptText("Task Importance");
         importanceComboBox.getItems().addAll(TaskImportance.values());
 
         Button createTaskButton = new Button("Create Task");
@@ -318,25 +319,22 @@ public class HelloApplication extends Application {
             }
         });
 
+        taskNameField.getStyleClass().add("list-popup");
+        statusComboBox.getStyleClass().add("list-popup");
+        categoryComboBox.getStyleClass().add("list-popup");
+        importanceComboBox.getStyleClass().add("list-popup");
+        createTaskButton.getStyleClass().add("list-popup");
+
         // Layout for task creation popup
-        GridPane taskCreationLayout = new GridPane();
-        taskCreationLayout.setHgap(10);
-        taskCreationLayout.setVgap(10);
-        taskCreationLayout.add(taskNameLabel, 0, 0);
-        taskCreationLayout.add(taskNameField, 1, 0);
-        taskCreationLayout.add(statusLabel, 0, 1);
-        taskCreationLayout.add(statusComboBox, 1, 1);
-        taskCreationLayout.add(categoryLabel, 0, 2);
-        taskCreationLayout.add(categoryComboBox, 1, 2);
-        taskCreationLayout.add(importanceLabel, 0, 3);
-        taskCreationLayout.add(importanceComboBox, 1, 3);
-        taskCreationLayout.add(createTaskButton, 0, 4);
+        VBox mainVBox = new VBox(10);
+        mainVBox.getChildren().addAll(taskNameField, statusComboBox, categoryComboBox, importanceComboBox, createTaskButton);
 
         HBox layout = new HBox(10);
         layout.setPadding(new Insets(0, 0, 0, 10));
-        layout.getChildren().add(taskCreationLayout);
+        layout.getChildren().add(mainVBox);
+        layout.getStyleClass().add("list-popup");
 
-        Scene popupScene = new Scene(layout, 300, 250);
+        Scene popupScene = new Scene(layout, 300, 210);
         popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         popupStage.setScene(popupScene);
         popupStage.show();
@@ -346,6 +344,7 @@ public class HelloApplication extends Application {
     private void updateListGroup(Stage stage) {
         listGroup.getChildren().clear();
         for (ToDoList list : allLists) {
+            list.updateCompletionPercentage();
             Button button = createListObject(list, stage);
             listGroup.getChildren().add(button);
         }
@@ -412,7 +411,7 @@ public class HelloApplication extends Application {
         layout.getChildren().add(mainVBox);
         layout.getStyleClass().add("list-popup");
 
-        Scene popupScene = new Scene(layout, 300, 200);
+        Scene popupScene = new Scene(layout, 300, 170);
         popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         popupStage.setScene(popupScene);
         popupStage.show();
