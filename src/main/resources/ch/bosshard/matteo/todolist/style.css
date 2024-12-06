@@ -28,9 +28,11 @@
     -fx-background-insets: 0;
     -fx-background-radius: 2px;
 }
+
 .button:hover {
     -fx-background-color: #8c8c8c;
 }
+
 .button:pressed {
     -fx-background-color: #6e6e6e;
     -fx-border-color: #4a4a4a;
@@ -39,6 +41,35 @@
 /* Create new To Do List Button */
 .create-list-button {
     -fx-font-style: italic;
+}
+
+/* To Do List Button */
+.list-detail {
+    -fx-font-size: 16px;
+    -fx-text-fill: #3b3b3b;
+    -fx-background-radius: 4px;
+}
+
+.list-detail.label {
+    -fx-underline: true;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.list-detail:hover {
+    -fx-background-color: darker;
+}
+
+.list-detail.button {
+    -fx-background-color: #c8c8c8;
+    -fx-pref-width: 330px;
+}
+
+.list-title{
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3b3b3b;
+    -fx-underline: true;
 }
 
 /* Create new To Do List popup */
@@ -50,10 +81,12 @@
     -fx-pref-width: 280px;
     -fx-pref-height: 18px;
 }
+
 .list-popup.label {
     -fx-max-width: 140px;
     -fx-font-style: italic;
 }
+
 .list-popup.text-field {
     -fx-background-color: #e6e6e6;
     -fx-border-width: 1px;
@@ -61,13 +94,16 @@
     -fx-border-radius: 2px;
     -fx-font-style: italic;
 }
+
 .list-popup.text-field.text-field {
     -fx-highlight-fill: #6e6e6e;
     -fx-highlight-text-fill: #e6e6e6;
 }
+
 .list-popup.text-field:hover {
     -fx-background-color: #8c8c8c;
 }
+
 .list-popup.combo-box {
     -fx-background-color: #e6e6e6;
     -fx-border-width: 1px;
@@ -75,57 +111,40 @@
     -fx-border-radius: 2px;
     -fx-font-style: italic;
 }
+
 .list-cell:hover {
     -fx-background-color: #8c8c8c;
 }
+
 .list-cell:pressed {
     -fx-background-color: #6e6e6e;
 }
+
 .list-popup.combo-box.list-cell:filled:selected {
     -fx-background-color: #8c8c8c;
 }
+
 .list-popup.combo-box.list-cell:focused {
     -fx-background-color: #8c8c8c;
 }
+
 .list-popup.combo-box:hover {
     -fx-background-color: #8c8c8c;
 }
+
 .list-popup.button {
     -fx-background-color: #c2c2c2;
 }
+
 .list-popup.button:hover {
     -fx-background-color: #8c8c8c;
 }
+
 .list-popup.button:pressed {
     -fx-background-color: #6e6e6e;
     -fx-border-color: #4a4a4a;
 }
 
-/* To Do List Button */
-.list-detail {
-    -fx-font-size: 16px;
-    -fx-text-fill: #3b3b3b;
-    -fx-background-radius: 4px;
-}
-.list-detail.label {
-    -fx-underline: true;
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-
-}
-.list-detail:hover {
-    -fx-background-color: darker;
-}
-.list-detail.button {
-    -fx-background-color: #c8c8c8;
-    -fx-pref-width: 330px;
-}
-.list-title{
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #3b3b3b;
-    -fx-underline: true;
-}
 /* Detailed view of To Do List */
 .task-object {
     -fx-font-size: 14px;
@@ -136,11 +155,13 @@
     -fx-max-width: 330px;
     -fx-padding: 0, 10px, 0, 10px;
 }
+
 .task-object.button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-max-width: 300px;
 }
+
 .task-object.check-box {
     -fx-background-color: transparent;
     -fx-border-color: #4a4a4a;
@@ -153,6 +174,7 @@
     -fx-pref-height: 20px;
     -fx-pref-width: 20px;
 }
+
 .task-object.check-box:hover {
     -fx-border-color: #3b3b3b;
     -fx-background-color: #8c8c8c;
@@ -160,6 +182,7 @@
     -fx-border-width: 2px;
     -fx-background-radius: 2px;
 }
+
 .task-object.check-box:selected {
     -fx-background-color: #6e6e6e;
     -fx-border-color: #4a4a4a;
@@ -169,9 +192,11 @@
     -fx-background-radius: 2px;
     -fx-mark-color: #e6e6e6;
 }
+
 .task-object.check-box:selected .box {
     -fx-mark-color: #e6e6e6;
 }
+
 .task-object.check-box .box {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -179,12 +204,14 @@
     -fx-border-width: 0;
     -fx-shape: "M 0,0 L 1,0 L 1,1 L 0,1 Z";
 }
+
 .task-title {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #3b3b3b;
     -fx-underline: true;
 }
+
 .task-category,
 .task-status,
 .task-importance {
@@ -193,19 +220,23 @@
     -fx-font-style: italic;
     -fx-alignment: center-right;
 }
+
 .task-status {
     -fx-alignment: center-left;
 }
+
 .task-left {
     -fx-border-color: transparent;
     -fx-alignment: center;
     -fx-padding: 0, 10px, 0, 10px;
 }
+
 .task-right {
     -fx-border-color: transparent;
     -fx-alignment: center;
     -fx-padding: 0, 10px, 0, 10px;
 }
+
 .task-buttons {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
