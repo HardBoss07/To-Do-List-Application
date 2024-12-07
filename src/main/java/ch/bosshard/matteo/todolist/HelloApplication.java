@@ -1,9 +1,6 @@
 package ch.bosshard.matteo.todolist;
 
-import ch.bosshard.matteo.todolist.enums.ListCategory;
-import ch.bosshard.matteo.todolist.enums.TaskCategory;
-import ch.bosshard.matteo.todolist.enums.TaskImportance;
-import ch.bosshard.matteo.todolist.enums.TaskStatus;
+import ch.bosshard.matteo.todolist.enums.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HelloApplication extends Application {
+
+    //TODO add a sort by drop down for tasks with options like importance(low to high, high to low) category...
+    //TODO add save system
 
     List<ToDoList> allLists = new ArrayList<>();
     VBox listGroup = new VBox(10);  // Use VBox to arrange the buttons vertically
@@ -92,17 +92,6 @@ public class HelloApplication extends Application {
         return button;
     }
 
-    private String darkenColor(String hexColor, double factor) {
-        Color color = Color.web(hexColor);
-        double red = Math.max(0, color.getRed() * (1 - factor));
-        double green = Math.max(0, color.getGreen() * (1 - factor));
-        double blue = Math.max(0, color.getBlue() * (1 - factor));
-        return String.format("#%02X%02X%02X",
-                (int) (red * 255),
-                (int) (green * 255),
-                (int) (blue * 255));
-    }
-
     private void showListDetail(Stage stage, ToDoList list) {
         VBox listDetailVBox = new VBox(10);
 
@@ -127,12 +116,45 @@ public class HelloApplication extends Application {
         Label taskStatusLabel = new Label(list.getAllTasks().isEmpty() ? "No current tasks" : "Current Tasks (" + list.getAllTasks().size() + "):");
         taskStatusLabel.getStyleClass().add("list-detail");
 
+        EnumStringConverter<SortingOptions> converter = new EnumStringConverter<>();
+        ComboBox<SortingOptions> sortingComboBox = new ComboBox<SortingOptions>();
+        sortingComboBox.setPromptText("Sort By:");
+        sortingComboBox.getStyleClass().add("list-detail");
+        sortingComboBox.getItems().addAll(SortingOptions.values());
+        sortingComboBox.setConverter(converter);
+
+        sortingComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            converter.setUseShortened(newValue != null);
+            sortingComboBox.setConverter(converter);
+        });
+
+        sortingComboBox.setCellFactory(comboBox -> new ListCell<>() {
+            @Override
+            protected void updateItem(SortingOptions item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                }
+                else {
+                    setText(item.toFormattedString());
+                }
+            }
+        });
+
+        Region spacer = new Region();
+        spacer.setMinHeight(5);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox statusHBox = new HBox(taskStatusLabel, spacer, sortingComboBox);
+        statusHBox.setSpacing(5);
+        statusHBox.setPadding(new Insets(0, 10, 0, 0));
+
         VBox tasksVBox = new VBox(10);
         for (Task task : list.getAllTasks()) {
             tasksVBox.getChildren().add(createTaskObject(task, stage, list));
         }
 
-        listDetailVBox.getChildren().addAll(titleLabel, buttons, taskStatusLabel, tasksVBox);
+        listDetailVBox.getChildren().addAll(titleLabel, buttons, statusHBox, tasksVBox);
 
         HBox layout = new HBox(10);
         layout.setPadding(new Insets(0, 0, 0, 10));
@@ -141,6 +163,66 @@ public class HelloApplication extends Application {
         Scene listDetailScene = new Scene(layout, 350, 600);
         listDetailScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         stage.setScene(listDetailScene);
+    }
+
+    // Create the list creation popup
+    private void showCreateListPopup(Stage stage) {
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Create List");
+
+        // Input fields for creating a new list
+        Label titleLabel = new Label("List Title:");
+        titleLabel.getStyleClass().add("list-popup");
+        TextField titleField = new TextField("Write a title");
+        titleField.getStyleClass().add("list-popup");
+
+        ComboBox<ListCategory> listCategoryComboBox = new ComboBox<>();
+        listCategoryComboBox.setPromptText("Select a category");
+        listCategoryComboBox.getStyleClass().add("list-popup");
+        listCategoryComboBox.getItems().addAll(ListCategory.values());
+        listCategoryComboBox.setConverter(new EnumStringConverter<>());
+
+        ComboBox<HBox> colorComboBox = new ComboBox<>();
+        colorComboBox.setPromptText("Select a color");
+        colorComboBox.getStyleClass().add("list-popup");
+        String[] colorOptions = {
+                "Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Gray"
+        };
+
+        for (String colorOption : colorOptions) {
+            colorComboBox.getItems().add(createColorObject(colorOption));
+        }
+
+        Button createListButton = new Button("Create List");
+        createListButton.getStyleClass().add("list-popup");
+        createListButton.setOnAction(e -> {
+            String listTitle = titleField.getText();
+            ListCategory listCategory = listCategoryComboBox.getValue();
+            String listColor = colorComboBox.getValue().getUserData().toString();
+
+            if (listTitle.isEmpty() || listCategory == null || listColor == null) {
+                showAlert("Error", "Please enter a valid title, a valid category and color!");
+            } else {
+                ToDoList newList = new ToDoList(listTitle, listCategory, listColor);
+                allLists.add(newList);
+                updateListGroup(stage);
+                popupStage.close();
+            }
+        });
+
+        // Layout for List Creation Popup
+        VBox mainVBox = new VBox(10);
+        mainVBox.getChildren().addAll(titleField, listCategoryComboBox, colorComboBox, createListButton);
+
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(mainVBox);
+        layout.getStyleClass().add("list-popup");
+
+        Scene popupScene = new Scene(layout, 300, 170);
+        popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
+        popupStage.setScene(popupScene);
+        popupStage.show();
     }
 
     // Create Task button
@@ -364,66 +446,6 @@ public class HelloApplication extends Application {
         alert.showAndWait();
     }
 
-    // Create the list creation popup
-    private void showCreateListPopup(Stage stage) {
-        Stage popupStage = new Stage();
-        popupStage.setTitle("Create List");
-
-        // Input fields for creating a new list
-        Label titleLabel = new Label("List Title:");
-        titleLabel.getStyleClass().add("list-popup");
-        TextField titleField = new TextField("Write a title");
-        titleField.getStyleClass().add("list-popup");
-
-        ComboBox<ListCategory> listCategoryComboBox = new ComboBox<>();
-        listCategoryComboBox.setPromptText("Select a category");
-        listCategoryComboBox.getStyleClass().add("list-popup");
-        listCategoryComboBox.getItems().addAll(ListCategory.values());
-        listCategoryComboBox.setConverter(new EnumStringConverter<>());
-
-        ComboBox<HBox> colorComboBox = new ComboBox<>();
-        colorComboBox.setPromptText("Select a color");
-        colorComboBox.getStyleClass().add("list-popup");
-        String[] colorOptions = {
-                "Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown", "Gray"
-        };
-
-        for (String colorOption : colorOptions) {
-            colorComboBox.getItems().add(createColorObject(colorOption));
-        }
-
-        Button createListButton = new Button("Create List");
-        createListButton.getStyleClass().add("list-popup");
-        createListButton.setOnAction(e -> {
-            String listTitle = titleField.getText();
-            ListCategory listCategory = listCategoryComboBox.getValue();
-            String listColor = colorComboBox.getValue().getUserData().toString();
-
-            if (listTitle.isEmpty() || listCategory == null || listColor == null) {
-                showAlert("Error", "Please enter a valid title, a valid category and color!");
-            } else {
-                ToDoList newList = new ToDoList(listTitle, listCategory, listColor);
-                allLists.add(newList);
-                updateListGroup(stage);
-                popupStage.close();
-            }
-        });
-
-        // Layout for List Creation Popup
-        VBox mainVBox = new VBox(10);
-        mainVBox.getChildren().addAll(titleField, listCategoryComboBox, colorComboBox, createListButton);
-
-        HBox layout = new HBox(10);
-        layout.setPadding(new Insets(0, 0, 0, 10));
-        layout.getChildren().add(mainVBox);
-        layout.getStyleClass().add("list-popup");
-
-        Scene popupScene = new Scene(layout, 300, 170);
-        popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
-        popupStage.setScene(popupScene);
-        popupStage.show();
-    }
-
     private HBox createDotNextToCategory(String color, String category) {
         HBox hBox = new HBox(5);
         hBox.setUserData(color);
@@ -467,6 +489,17 @@ public class HelloApplication extends Application {
             case "Gray" -> "#D4D4D4";
             default -> "#FFFFFF";
         };
+    }
+
+    private String darkenColor(String hexColor, double factor) {
+        Color color = Color.web(hexColor);
+        double red = Math.max(0, color.getRed() * (1 - factor));
+        double green = Math.max(0, color.getGreen() * (1 - factor));
+        double blue = Math.max(0, color.getBlue() * (1 - factor));
+        return String.format("#%02X%02X%02X",
+                (int) (red * 255),
+                (int) (green * 255),
+                (int) (blue * 255));
     }
 
     private void createExampleListWithTasks() {

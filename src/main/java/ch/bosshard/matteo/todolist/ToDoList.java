@@ -1,6 +1,7 @@
 package ch.bosshard.matteo.todolist;
 
 import ch.bosshard.matteo.todolist.enums.ListCategory;
+import ch.bosshard.matteo.todolist.enums.SortingOptions;
 import ch.bosshard.matteo.todolist.enums.TaskStatus;
 
 import java.text.DecimalFormat;
@@ -16,6 +17,7 @@ public class ToDoList {
     private ListCategory listCategory;
     private double completionPercentage;
     private String listColor;
+    private SortingOptions sortingOptions = SortingOptions.UNCATEGORIZED;
 
     Map<String, String> colorSwitcher = new HashMap<String, String>();
 
@@ -48,6 +50,10 @@ public class ToDoList {
         completionPercentage = Double.parseDouble(df.format((double) completedTasks.size() / allTasks.size() * 100));
 
         if (Double.isNaN(completionPercentage)) completionPercentage = 0;
+    }
+
+    public void sortList(SortingOptions sortingOptions) {
+        this.sortingOptions = sortingOptions;
     }
 
     // BASE METHODS

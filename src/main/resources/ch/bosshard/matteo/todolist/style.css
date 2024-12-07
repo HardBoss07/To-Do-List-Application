@@ -52,8 +52,8 @@
 
 .list-detail.label {
     -fx-underline: true;
-    -fx-background-color: transparent;
     -fx-border-color: transparent;
+    -fx-background-color: transparent;
 }
 
 .list-detail:hover {
@@ -70,6 +70,32 @@
     -fx-font-weight: bold;
     -fx-text-fill: #3b3b3b;
     -fx-underline: true;
+}
+
+.list-detail.combo-box {
+    -fx-background-color: #e6e6e6;
+    -fx-border-width: 1px;
+    -fx-border-color: #4a4a4a;
+    -fx-border-radius: 2px;
+    -fx-font-size: 10px;
+    -fx-alignment: top-right;
+    -fx-max-width: 100px;
+}
+
+.list-detail.combo-box:hover {
+    -fx-background-color: #8c8c8c;
+}
+
+.list-detail.combo-box:pressed {
+    -fx-background-color: #6e6e6e;
+}
+
+.list-detail.combo-box.list-cell:filled:selected {
+    -fx-background-color: #8c8c8c;
+}
+
+.list-detail.combo-box.list-cell:focused {
+    -fx-background-color: #8c8c8c;
 }
 
 /* Create new To Do List popup */
