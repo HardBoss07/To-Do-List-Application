@@ -18,6 +18,8 @@ public class ToDoList {
     private double completionPercentage;
     private String listColor;
     private SortingOptions sortingOptions = SortingOptions.UNCATEGORIZED;
+    private List<Task> displayTaskList;
+
 
     Map<String, String> colorSwitcher = new HashMap<String, String>();
 
@@ -27,6 +29,7 @@ public class ToDoList {
         this.allTasks = new ArrayList<>();
         this.completedTasks = new ArrayList<>();
         this.completionPercentage = 0;
+        this.displayTaskList = this.allTasks;
 
         colorSwitcher.put("Red", "#E63946");
         colorSwitcher.put("Blue", "#457B9D");
@@ -52,8 +55,10 @@ public class ToDoList {
         if (Double.isNaN(completionPercentage)) completionPercentage = 0;
     }
 
-    public void sortList(SortingOptions sortingOptions) {
-        this.sortingOptions = sortingOptions;
+    public void sortList() {
+        SortTasks sortTasks = new SortTasks(this.sortingOptions);
+        displayTaskList = sortTasks.sortTasks(allTasks);
+        System.out.println("Sorted " + allTasks + " to " + displayTaskList + " with " + sortingOptions.toFormattedString());
     }
 
     // BASE METHODS
@@ -95,6 +100,22 @@ public class ToDoList {
 
     public void setCompletionPercentage(double completionPercentage) {
         this.completionPercentage = completionPercentage;
+    }
+
+    public List<Task> getDisplayTaskList() {
+        return displayTaskList;
+    }
+
+    public void setDisplayTaskList(List<Task> displayTaskList) {
+        this.displayTaskList = displayTaskList;
+    }
+
+    public SortingOptions getSortingOptions() {
+        return sortingOptions;
+    }
+
+    public void setSortingOptions(SortingOptions sortingOptions) {
+        this.sortingOptions = sortingOptions;
     }
 
     @Override

@@ -122,10 +122,13 @@ public class HelloApplication extends Application {
         sortingComboBox.getStyleClass().add("list-detail");
         sortingComboBox.getItems().addAll(SortingOptions.values());
         sortingComboBox.setConverter(converter);
+        list.setSortingOptions(sortingComboBox.getValue());
 
         sortingComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
             converter.setUseShortened(newValue != null);
             sortingComboBox.setConverter(converter);
+            list.setSortingOptions(sortingComboBox.getValue());
+            list.sortList();
         });
 
         sortingComboBox.setCellFactory(comboBox -> new ListCell<>() {
@@ -150,7 +153,7 @@ public class HelloApplication extends Application {
         statusHBox.setPadding(new Insets(0, 10, 0, 0));
 
         VBox tasksVBox = new VBox(10);
-        for (Task task : list.getAllTasks()) {
+        for (Task task : list.getDisplayTaskList()) {
             tasksVBox.getChildren().add(createTaskObject(task, stage, list));
         }
 
