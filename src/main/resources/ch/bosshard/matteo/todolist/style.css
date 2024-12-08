@@ -12,6 +12,13 @@
     -fx-padding: 5px 0;
 }
 
+/* General scroll pane settings */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 0 0 0;
+}
+
 /* General button styling */
 .button {
     -fx-font-size: 18px;
@@ -38,8 +45,9 @@
     -fx-border-color: #4a4a4a;
 }
 
-/* Create new To Do List Button */
-.create-list-button {
+/* Create new  or delete To Do List Button */
+.create-list-button,
+.delete-list-button {
     -fx-font-style: italic;
 }
 

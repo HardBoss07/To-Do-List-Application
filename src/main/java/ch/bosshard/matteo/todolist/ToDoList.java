@@ -67,6 +67,11 @@ public class ToDoList {
         sortList();
     }
 
+    public void deleteTask(Task task) {
+        allTasks.remove(task);
+        sortList();
+    }
+
     // BASE METHODS
     public String getListTitle() {
         return listTitle;

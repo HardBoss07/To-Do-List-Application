@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.HPos;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -23,14 +24,13 @@ import java.util.List;
 
 public class HelloApplication extends Application {
 
-    //TODO add a sort by drop down for tasks with options like importance(low to high, high to low) category...
     //TODO add save system
 
     List<ToDoList> allLists = new ArrayList<>();
     VBox listGroup = new VBox(10);  // Use VBox to arrange the buttons vertically
     Scene mainScene;
 
-    // Start the main stage
+    /* Main View */
     @Override
     public void start(Stage mainStage) {
         // Title label
@@ -42,9 +42,21 @@ public class HelloApplication extends Application {
         createList.setOnAction(e -> showCreateListPopup(mainStage));
         createList.getStyleClass().add("create-list-button");
 
+        // ScrollPane for the listGroup
+        ScrollPane scrollPane = new ScrollPane(listGroup);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        // Delete list button
+        Button deleteList = new Button("Delete a List");
+        deleteList.setOnAction(e -> showDeleteListPopup(mainStage));
+        deleteList.getStyleClass().add("delete-list-button");
+
         // Layout for main stage
         VBox mainVBox = new VBox(10);
-        mainVBox.getChildren().addAll(label, createList, listGroup);
+        mainVBox.getChildren().addAll(label, createList, deleteList, scrollPane);
 
         HBox mainHBox = new HBox(20);
         mainHBox.setPadding(new Insets(0, 0, 0, 10));
@@ -62,122 +74,6 @@ public class HelloApplication extends Application {
         mainStage.show();
 
         mainScene = scene;
-    }
-
-    // Create list buttons
-    private Button createListObject(ToDoList list, Stage stage) {
-        Button button = new Button();
-        button.getStyleClass().add("list-detail");
-        button.setStyle("-fx-background-color: " + list.getListColor() + ";");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: " + darkenColor(list.getListColor(), 0.2) + ";"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: " + list.getListColor() + ";"));
-
-        button.setPrefWidth(330);
-        button.setPrefHeight(52);
-
-        Label titleLabel = new Label(list.getListTitle());
-        Label categoryLabel = new Label(list.getListCategory().toFormattedString());
-        Label tasksLabel = new Label(list.getAllTasks().size() + " Tasks");
-        Label completionLabel = new Label(list.getCompletedTasks().size() + "/" + list.getAllTasks().size() + " (" + list.getCompletionPercentage() + "%)");
-
-        HBox topLayer = new HBox(20, titleLabel, categoryLabel);
-        HBox bottomLayer = new HBox(20, tasksLabel, completionLabel);
-        VBox content = new VBox(10, topLayer, bottomLayer);
-
-        button.setGraphic(content);
-
-        button.setOnAction(e -> showListDetail(stage, list));
-
-        button.setUserData(list);
-        return button;
-    }
-
-    private void showListDetail(Stage stage, ToDoList list) {
-        VBox listDetailVBox = new VBox(10);
-
-        Label titleLabel = new Label(list.getListTitle());
-        titleLabel.getStyleClass().add("list-title");
-        Button backButton = new Button("< Back");
-        backButton.getStyleClass().add("task-buttons");
-        backButton.setOnAction(e -> {
-            updateListGroup(stage);
-            stage.setScene(mainScene);
-        });
-
-        Button addTaskButton = new Button("+ Add Task");
-        addTaskButton.setOnAction(e -> showCreateTaskPopup(stage, list));
-        addTaskButton.getStyleClass().add("task-buttons");
-
-        HBox buttons = new HBox(backButton, addTaskButton);
-        buttons.setSpacing(5);
-        buttons.setMaxHeight(330);
-        buttons.setPadding(new Insets(0, 10, 0, 0));
-
-        Label taskStatusLabel = new Label(list.getAllTasks().isEmpty() ? "No current tasks" : "Current Tasks (" + list.getAllTasks().size() + "):");
-        taskStatusLabel.getStyleClass().add("list-detail");
-
-        VBox tasksVBox = new VBox(10);
-
-        EnumStringConverter<SortingOptions> converter = new EnumStringConverter<>();
-        ComboBox<SortingOptions> sortingComboBox = new ComboBox<SortingOptions>();
-        sortingComboBox.setPromptText("Sort By:");
-        sortingComboBox.getStyleClass().add("list-detail");
-        sortingComboBox.getItems().addAll(SortingOptions.values());
-        sortingComboBox.setConverter(converter);
-        list.setSortingOptions(sortingComboBox.getValue());
-
-        sortingComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
-            converter.setUseShortened(newValue != null);
-            sortingComboBox.setConverter(converter);
-            list.setSortingOptions(sortingComboBox.getValue());
-            list.sortList();
-            tasksVBox.getChildren().clear();
-            tasksVBox.getChildren().addAll(updateTaskList(stage, list).getChildren());
-        });
-
-        sortingComboBox.setCellFactory(comboBox -> new ListCell<>() {
-            @Override
-            protected void updateItem(SortingOptions item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                }
-                else {
-                    setText(item.toFormattedString());
-                }
-            }
-        });
-
-        Region spacer = new Region();
-        spacer.setMinHeight(5);
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        HBox statusHBox = new HBox(taskStatusLabel, spacer, sortingComboBox);
-        statusHBox.setSpacing(5);
-        statusHBox.setPadding(new Insets(0, 10, 0, 0));
-
-        for (Task task : list.getDisplayTaskList()) {
-            tasksVBox.getChildren().add(createTaskObject(task, stage, list));
-        }
-
-        listDetailVBox.getChildren().addAll(titleLabel, buttons, statusHBox, tasksVBox);
-
-        HBox layout = new HBox(10);
-        layout.setPadding(new Insets(0, 0, 0, 10));
-        layout.getChildren().add(listDetailVBox);
-
-        Scene listDetailScene = new Scene(layout, 350, 600);
-        listDetailScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
-        stage.setScene(listDetailScene);
-    }
-
-    private VBox updateTaskList(Stage stage, ToDoList list) {
-        VBox vBox = new VBox(10);
-        for (Task task : list.getDisplayTaskList()) {
-            vBox.getChildren().add(createTaskObject(task, stage, list));
-        }
-
-        return vBox;
     }
 
     // Create the list creation popup
@@ -235,6 +131,281 @@ public class HelloApplication extends Application {
         layout.getStyleClass().add("list-popup");
 
         Scene popupScene = new Scene(layout, 300, 170);
+        popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
+        popupStage.setScene(popupScene);
+        popupStage.show();
+    }
+
+    // Create list buttons
+    private Button createListObject(ToDoList list, Stage stage) {
+        Button button = new Button();
+        button.getStyleClass().add("list-detail");
+        button.setStyle("-fx-background-color: " + list.getListColor() + ";");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: " + darkenColor(list.getListColor(), 0.2) + ";"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: " + list.getListColor() + ";"));
+
+        button.setPrefWidth(330);
+        button.setPrefHeight(52);
+
+        Label titleLabel = new Label(list.getListTitle());
+        Label categoryLabel = new Label(list.getListCategory().toFormattedString());
+        Label tasksLabel = new Label(list.getAllTasks().size() + " Tasks");
+        Label completionLabel = new Label(list.getCompletedTasks().size() + "/" + list.getAllTasks().size() + " (" + list.getCompletionPercentage() + "%)");
+
+        HBox topLayer = new HBox(20, titleLabel, categoryLabel);
+        HBox bottomLayer = new HBox(20, tasksLabel, completionLabel);
+        VBox content = new VBox(10, topLayer, bottomLayer);
+
+        button.setGraphic(content);
+
+        button.setOnAction(e -> showListDetail(stage, list));
+
+        button.setUserData(list);
+        return button;
+    }
+
+    // Show an alert message
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    // Update list of buttons in the main view
+    private void updateListGroup(Stage stage) {
+        listGroup.getChildren().clear();
+        for (ToDoList list : allLists) {
+            list.updateCompletionPercentage();
+            Button button = createListObject(list, stage);
+            listGroup.getChildren().add(button);
+        }
+    }
+
+    private void createExampleListWithTasks() {
+        ToDoList list = new ToDoList("Example List", ListCategory.PROFESSIONAL, "Red");
+        Task task1 = new Task("Write Project description", TaskStatus.COMPLETED, TaskCategory.WORK, TaskImportance.HIGH);
+        Task task2 = new Task("Clean out my drawer", TaskStatus.NOT_STARTED, TaskCategory.MISCELLANEOUS, TaskImportance.OPTIONAL);
+        Task task3 = new Task("Drink 0.5L per hour", TaskStatus.IN_PROGRESS, TaskCategory.HEALTH, TaskImportance.ESSENTIAL);
+        list.getAllTasks().add(task1);
+        list.getAllTasks().add(task2);
+        list.getAllTasks().add(task3);
+        allLists.add(list);
+    }
+
+    /* List Management */
+
+    // Delete a list
+    private void showDeleteListPopup(Stage stage) {
+        Stage deletePopup = new Stage();
+        deletePopup.setTitle("Delete a List");
+
+        ComboBox<ToDoList> listComboBox = new ComboBox<>();
+        listComboBox.setPromptText("Select a List");
+        listComboBox.getStyleClass().add("list-popup");
+        listComboBox.getItems().addAll(allLists);
+
+        listComboBox.setCellFactory(comboBox -> new ListCell<>() {
+            @Override
+            protected void updateItem(ToDoList item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getListTitle());
+            }
+        });
+        listComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(ToDoList item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getListTitle());
+            }
+        });
+
+        Button deleteButton = new Button("Delete");
+        deleteButton.getStyleClass().add("list-popup");
+        deleteButton.setOnAction(e -> {
+            ToDoList selectedList = listComboBox.getValue();
+            if (selectedList != null) {
+                allLists.remove(selectedList);
+                updateListGroup(stage);
+                deletePopup.close();
+            }
+            else {
+                showAlert("Error", "Please select a List to delete!");
+            }
+        });
+
+        // Layout
+        VBox mainVBox = new VBox(10);
+        mainVBox.getChildren().addAll(listComboBox, deleteButton);
+
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(mainVBox);
+        layout.getStyleClass().add("list-popup");
+
+        Scene scene = new Scene(layout, 300, 150);
+        scene.getStylesheets().add(mainScene.getStylesheets().getFirst());
+        deletePopup.setScene(scene);
+        deletePopup.show();
+    }
+
+    private void showListDetail(Stage stage, ToDoList list) {
+        VBox listDetailVBox = new VBox(10);
+
+        Label titleLabel = new Label(list.getListTitle());
+        titleLabel.getStyleClass().add("list-title");
+        Button backButton = new Button("< Back");
+        backButton.getStyleClass().add("task-buttons");
+        backButton.setOnAction(e -> {
+            updateListGroup(stage);
+            stage.setScene(mainScene);
+        });
+
+        Button addTaskButton = new Button("+ Add Task");
+        addTaskButton.setOnAction(e -> showCreateTaskPopup(stage, list));
+        addTaskButton.getStyleClass().add("task-buttons");
+
+        Button deleteTaskButton = new Button("- Delete Task");
+        deleteTaskButton.setOnAction(e -> showDeleteTaskPopup(stage, list));
+        deleteTaskButton.getStyleClass().add("task-buttons");
+
+        HBox buttons = new HBox(addTaskButton, deleteTaskButton);
+        buttons.setSpacing(5);
+        buttons.setMaxHeight(330);
+        buttons.setPadding(new Insets(0, 10, 0, 0));
+
+        Label taskStatusLabel = new Label(list.getAllTasks().isEmpty() ? "No current tasks" : "Current Tasks (" + list.getAllTasks().size() + "):");
+        taskStatusLabel.getStyleClass().add("list-detail");
+
+        VBox tasksVBox = new VBox(10);
+
+        EnumStringConverter<SortingOptions> converter = new EnumStringConverter<>();
+        ComboBox<SortingOptions> sortingComboBox = new ComboBox<SortingOptions>();
+        sortingComboBox.setPromptText("Sort By:");
+        sortingComboBox.getStyleClass().add("list-detail");
+        sortingComboBox.getItems().addAll(SortingOptions.values());
+        sortingComboBox.setConverter(converter);
+        list.setSortingOptions(sortingComboBox.getValue());
+
+        sortingComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            converter.setUseShortened(newValue != null);
+            sortingComboBox.setConverter(converter);
+            list.setSortingOptions(sortingComboBox.getValue());
+            list.sortList();
+            tasksVBox.getChildren().clear();
+            tasksVBox.getChildren().addAll(updateTaskList(stage, list).getChildren());
+        });
+
+        sortingComboBox.setCellFactory(comboBox -> new ListCell<>() {
+            @Override
+            protected void updateItem(SortingOptions item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                }
+                else {
+                    setText(item.toFormattedString());
+                }
+            }
+        });
+
+        Region spacer = new Region();
+        spacer.setMinHeight(5);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox statusHBox = new HBox(taskStatusLabel, spacer, sortingComboBox);
+        statusHBox.setSpacing(5);
+        statusHBox.setPadding(new Insets(0, 10, 0, 0));
+
+        for (Task task : list.getDisplayTaskList()) {
+            tasksVBox.getChildren().add(createTaskObject(task, stage, list));
+        }
+
+        ScrollPane scrollPane = new ScrollPane(tasksVBox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        listDetailVBox.getChildren().addAll(titleLabel, backButton, buttons, statusHBox, scrollPane);
+
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(listDetailVBox);
+
+        Scene listDetailScene = new Scene(layout, 350, 600);
+        listDetailScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
+        stage.setScene(listDetailScene);
+    }
+
+    private VBox updateTaskList(Stage stage, ToDoList list) {
+        VBox vBox = new VBox(10);
+        for (Task task : list.getDisplayTaskList()) {
+            vBox.getChildren().add(createTaskObject(task, stage, list));
+        }
+
+        return vBox;
+    }
+
+    /* Task Management */
+
+    // Show the popup for creating a new task
+    private void showCreateTaskPopup(Stage stage, ToDoList list) {
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Create Task");
+
+        // Input fields
+        TextField taskNameField = new TextField("Task Name");
+
+        ComboBox<TaskStatus> statusComboBox = new ComboBox<>();
+        statusComboBox.setPromptText("Current Status");
+        statusComboBox.getItems().addAll(TaskStatus.values());
+        statusComboBox.setConverter(new EnumStringConverter<>());
+
+        ComboBox<TaskCategory> categoryComboBox = new ComboBox<>();
+        categoryComboBox.setPromptText("Task Category");
+        categoryComboBox.getItems().addAll(TaskCategory.values());
+        categoryComboBox.setConverter(new EnumStringConverter<>());
+
+        ComboBox<TaskImportance> importanceComboBox = new ComboBox<>();
+        importanceComboBox.setPromptText("Task Importance");
+        importanceComboBox.getItems().addAll(TaskImportance.values());
+        importanceComboBox.setConverter(new EnumStringConverter<>());
+
+        Button createTaskButton = new Button("Create Task");
+        createTaskButton.setOnAction(e -> {
+            String taskName = taskNameField.getText();
+            TaskStatus status = statusComboBox.getValue();
+            TaskCategory category = categoryComboBox.getValue();
+            TaskImportance importance = importanceComboBox.getValue();
+
+            if (taskName.isEmpty() || status == null || category == null || importance == null) {
+                showAlert("Error", "Please fill in all fields!");
+            } else {
+                Task newTask = new Task(taskName, status, category, importance);
+                list.addTask(newTask);
+
+                showListDetail(stage, list);
+                popupStage.close();
+            }
+        });
+
+        taskNameField.getStyleClass().add("list-popup");
+        statusComboBox.getStyleClass().add("list-popup");
+        categoryComboBox.getStyleClass().add("list-popup");
+        importanceComboBox.getStyleClass().add("list-popup");
+        createTaskButton.getStyleClass().add("list-popup");
+
+        // Layout for task creation popup
+        VBox mainVBox = new VBox(10);
+        mainVBox.getChildren().addAll(taskNameField, statusComboBox, categoryComboBox, importanceComboBox, createTaskButton);
+
+        HBox layout = new HBox(10);
+        layout.setPadding(new Insets(0, 0, 0, 10));
+        layout.getChildren().add(mainVBox);
+        layout.getStyleClass().add("list-popup");
+
+        Scene popupScene = new Scene(layout, 300, 210);
         popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         popupStage.setScene(popupScene);
         popupStage.show();
@@ -381,85 +552,64 @@ public class HelloApplication extends Application {
         editTaskStage.show();
     }
 
-    // Show the popup for creating a new task
-    private void showCreateTaskPopup(Stage stage, ToDoList list) {
-        Stage popupStage = new Stage();
-        popupStage.setTitle("Create Task");
+    // Show the popup for deleting a task
+    private void showDeleteTaskPopup(Stage stage, ToDoList list) {
+        Stage deletePopup = new Stage();
+        deletePopup.setTitle("Delete a List");
 
-        // Input fields
-        TextField taskNameField = new TextField("Task Name");
+        ComboBox<Task> taskComboBox = new ComboBox<>();
+        taskComboBox.setPromptText("Select a Task");
+        taskComboBox.getStyleClass().add("list-popup");
+        taskComboBox.getItems().addAll(list.getAllTasks());
 
-        ComboBox<TaskStatus> statusComboBox = new ComboBox<>();
-        statusComboBox.setPromptText("Current Status");
-        statusComboBox.getItems().addAll(TaskStatus.values());
-        statusComboBox.setConverter(new EnumStringConverter<>());
-
-        ComboBox<TaskCategory> categoryComboBox = new ComboBox<>();
-        categoryComboBox.setPromptText("Task Category");
-        categoryComboBox.getItems().addAll(TaskCategory.values());
-        categoryComboBox.setConverter(new EnumStringConverter<>());
-
-        ComboBox<TaskImportance> importanceComboBox = new ComboBox<>();
-        importanceComboBox.setPromptText("Task Importance");
-        importanceComboBox.getItems().addAll(TaskImportance.values());
-        importanceComboBox.setConverter(new EnumStringConverter<>());
-
-        Button createTaskButton = new Button("Create Task");
-        createTaskButton.setOnAction(e -> {
-            String taskName = taskNameField.getText();
-            TaskStatus status = statusComboBox.getValue();
-            TaskCategory category = categoryComboBox.getValue();
-            TaskImportance importance = importanceComboBox.getValue();
-
-            if (taskName.isEmpty() || status == null || category == null || importance == null) {
-                showAlert("Error", "Please fill in all fields!");
-            } else {
-                Task newTask = new Task(taskName, status, category, importance);
-                list.addTask(newTask);
-
-                showListDetail(stage, list);
-                popupStage.close();
+        taskComboBox.setCellFactory(comboBox -> new ListCell<>() {
+            @Override
+            protected void updateItem(Task item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getTaskName());
+            }
+        });
+        taskComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Task item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getTaskName());
             }
         });
 
-        taskNameField.getStyleClass().add("list-popup");
-        statusComboBox.getStyleClass().add("list-popup");
-        categoryComboBox.getStyleClass().add("list-popup");
-        importanceComboBox.getStyleClass().add("list-popup");
-        createTaskButton.getStyleClass().add("list-popup");
+        Button deleteButton = new Button("Delete");
+        deleteButton.getStyleClass().add("list-popup");
+        deleteButton.setOnAction(e -> {
+            Task selectedTask = taskComboBox.getValue();
+            if (selectedTask != null) {
+                list.deleteTask(selectedTask);
 
-        // Layout for task creation popup
+                showListDetail(stage, list);
+
+                updateListGroup(stage);
+                deletePopup.close();
+            }
+            else {
+                showAlert("Error", "Please select a Task to delete!");
+            }
+        });
+
+        // Layout
         VBox mainVBox = new VBox(10);
-        mainVBox.getChildren().addAll(taskNameField, statusComboBox, categoryComboBox, importanceComboBox, createTaskButton);
+        mainVBox.getChildren().addAll(taskComboBox, deleteButton);
 
         HBox layout = new HBox(10);
         layout.setPadding(new Insets(0, 0, 0, 10));
         layout.getChildren().add(mainVBox);
         layout.getStyleClass().add("list-popup");
 
-        Scene popupScene = new Scene(layout, 300, 210);
-        popupScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
-        popupStage.setScene(popupScene);
-        popupStage.show();
+        Scene scene = new Scene(layout, 300, 150);
+        scene.getStylesheets().add(mainScene.getStylesheets().getFirst());
+        deletePopup.setScene(scene);
+        deletePopup.show();
     }
 
-    // Update list of buttons in the main view
-    private void updateListGroup(Stage stage) {
-        listGroup.getChildren().clear();
-        for (ToDoList list : allLists) {
-            list.updateCompletionPercentage();
-            Button button = createListObject(list, stage);
-            listGroup.getChildren().add(button);
-        }
-    }
-
-    // Show an alert message
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+    /* Other Helper Methods */
 
     private HBox createDotNextToCategory(String color, String category) {
         HBox hBox = new HBox(5);
@@ -515,17 +665,6 @@ public class HelloApplication extends Application {
                 (int) (red * 255),
                 (int) (green * 255),
                 (int) (blue * 255));
-    }
-
-    private void createExampleListWithTasks() {
-        ToDoList list = new ToDoList("Example List", ListCategory.PROFESSIONAL, "Red");
-        Task task1 = new Task("Write Project description", TaskStatus.COMPLETED, TaskCategory.WORK, TaskImportance.HIGH);
-        Task task2 = new Task("Clean out my drawer", TaskStatus.NOT_STARTED, TaskCategory.MISCELLANEOUS, TaskImportance.OPTIONAL);
-        Task task3 = new Task("Drink 0.5L per hour", TaskStatus.IN_PROGRESS, TaskCategory.HEALTH, TaskImportance.ESSENTIAL);
-        list.getAllTasks().add(task1);
-        list.getAllTasks().add(task2);
-        list.getAllTasks().add(task3);
-        allLists.add(list);
     }
 
     public static void main(String[] args) {
