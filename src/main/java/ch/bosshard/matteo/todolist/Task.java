@@ -3,6 +3,7 @@ package ch.bosshard.matteo.todolist;
 import ch.bosshard.matteo.todolist.enums.TaskCategory;
 import ch.bosshard.matteo.todolist.enums.TaskImportance;
 import ch.bosshard.matteo.todolist.enums.TaskStatus;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,23 @@ public class Task {
         backgroundColorMap.put(TaskCategory.MISCELLANEOUS, "#808080");
 
         backgroundColor = backgroundColorMap.get(taskCategory);
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("taskName", taskName);
+        jsonObject.put("taskStatus", taskStatus.toString());
+        jsonObject.put("taskCategory", taskCategory.toString());
+        jsonObject.put("taskImportance", taskImportance.toString());
+        return jsonObject;
+    }
+
+    public static Task fromJSON(JSONObject jsonObject) {
+        String taskName = jsonObject.getString("taskName");
+        TaskStatus taskStatus = TaskStatus.valueOf(jsonObject.getString("taskStatus"));
+        TaskCategory taskCategory = TaskCategory.valueOf(jsonObject.getString("taskCategory"));
+        TaskImportance taskImportance = TaskImportance.valueOf(jsonObject.getString("taskImportance"));
+        return new Task(taskName, taskStatus, taskCategory, taskImportance);
     }
 
     public void updateColor() {

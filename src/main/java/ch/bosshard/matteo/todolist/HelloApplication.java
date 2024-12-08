@@ -24,15 +24,16 @@ import java.util.List;
 
 public class HelloApplication extends Application {
 
-    //TODO add save system
-
     List<ToDoList> allLists = new ArrayList<>();
     VBox listGroup = new VBox(10);  // Use VBox to arrange the buttons vertically
     Scene mainScene;
+    String path = "todoLists.json";
+    SaveSystem saveSystem = new SaveSystem(path);
 
     /* Main View */
     @Override
     public void start(Stage mainStage) {
+        allLists = saveSystem.loadData();
         // Title label
         Label label = new Label("To Do List App");
         label.getStyleClass().add("title-label");
@@ -61,9 +62,6 @@ public class HelloApplication extends Application {
         HBox mainHBox = new HBox(20);
         mainHBox.setPadding(new Insets(0, 0, 0, 10));
         mainHBox.getChildren().add(mainVBox);
-
-        // Load example content
-        createExampleListWithTasks();
 
         // Initial Scene setup
         updateListGroup(mainStage);
@@ -161,6 +159,7 @@ public class HelloApplication extends Application {
         button.setOnAction(e -> showListDetail(stage, list));
 
         button.setUserData(list);
+
         return button;
     }
 
@@ -190,7 +189,6 @@ public class HelloApplication extends Application {
         list.getAllTasks().add(task1);
         list.getAllTasks().add(task2);
         list.getAllTasks().add(task3);
-        allLists.add(list);
     }
 
     /* List Management */
@@ -343,7 +341,6 @@ public class HelloApplication extends Application {
         for (Task task : list.getDisplayTaskList()) {
             vBox.getChildren().add(createTaskObject(task, stage, list));
         }
-
         return vBox;
     }
 
@@ -460,8 +457,10 @@ public class HelloApplication extends Application {
         checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
                 task.setTaskStatus(TaskStatus.COMPLETED);
+                if (!list.getCompletedTasks().contains(task)) list.getCompletedTasks().add(task);
             } else {
                 task.setTaskStatus(TaskStatus.NOT_STARTED);
+                list.getCompletedTasks().remove(task);
             }
             statusLabel.setText(task.getTaskStatus().toFormattedString());
         });
@@ -669,5 +668,10 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    @Override
+    public void stop() {
+        saveSystem.saveData(allLists);
     }
 }

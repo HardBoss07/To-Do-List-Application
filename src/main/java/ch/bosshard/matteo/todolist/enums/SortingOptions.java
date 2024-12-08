@@ -57,5 +57,4 @@ public enum SortingOptions {
 
         return formattedString.toString().trim();
     }
-
 }

@@ -3,6 +3,8 @@ package ch.bosshard.matteo.todolist;
 import ch.bosshard.matteo.todolist.enums.ListCategory;
 import ch.bosshard.matteo.todolist.enums.SortingOptions;
 import ch.bosshard.matteo.todolist.enums.TaskStatus;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -42,6 +44,19 @@ public class ToDoList {
         colorSwitcher.put("Gray", "#D4D4D4");
 
         this.listColor = colorSwitcher.get(listColor);
+        this.sortingOptions = SortingOptions.UNCATEGORIZED;
+    }
+
+    public ToDoList(String listTitle, List<Task> allTasks, List<Task> completedTasks, ListCategory listCategory, double completionPercentage, String listColor, SortingOptions sortingOptions, List<Task> displayTaskList) {
+        this.listTitle = listTitle;
+        this.allTasks = allTasks;
+        this.completedTasks = completedTasks;
+        this.listCategory = listCategory;
+        this.completionPercentage = completionPercentage;
+        this.listColor = listColor;
+        this.sortingOptions = sortingOptions;
+        this.displayTaskList = displayTaskList;
+        if (this.sortingOptions == null) this.sortingOptions = SortingOptions.UNCATEGORIZED;
     }
 
     public void updateCompletionPercentage() {
@@ -129,6 +144,14 @@ public class ToDoList {
         this.sortingOptions = sortingOptions;
     }
 
+    public String getListColor() {
+        return listColor;
+    }
+
+    public void setListColor(String listColor) {
+        this.listColor = listColor;
+    }
+
     @Override
     public String toString() {
         return "ToDoList{" +
@@ -138,14 +161,76 @@ public class ToDoList {
                 ", listCategory=" + listCategory +
                 ", completionPercentage=" + completionPercentage +
                 ", listColor='" + listColor + '\'' +
+                ", sortingOptions=" + sortingOptions +
+                ", displayTaskList=" + displayTaskList +
+                ", colorSwitcher=" + colorSwitcher +
                 '}';
     }
 
-    public String getListColor() {
-        return listColor;
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("listTitle", listTitle);
+
+        if (sortingOptions == null) sortingOptions = SortingOptions.UNCATEGORIZED;
+
+        JSONArray allTasksArray = new JSONArray();
+        for (Task task : allTasks) {
+            allTasksArray.put(task.toJSON());
+        }
+        jsonObject.put("allTasks", allTasksArray);
+
+        JSONArray completedTasksArray = new JSONArray();
+        for (Task task : completedTasks) {
+            completedTasksArray.put(task.toJSON());
+        }
+        jsonObject.put("completedTasks", completedTasksArray);
+
+        JSONArray displayTaskListArray = new JSONArray();
+        for (Task task : displayTaskList) {
+            displayTaskListArray.put(task.toJSON());
+        }
+        jsonObject.put("displayTaskList", displayTaskListArray);
+
+        jsonObject.put("completionPercentage", completionPercentage);
+        jsonObject.put("listCategory", listCategory.toString());
+        jsonObject.put("sortingOptions", sortingOptions.toString());
+        jsonObject.put("listColor", listColor);
+
+        return jsonObject;
     }
 
-    public void setListColor(String listColor) {
-        this.listColor = listColor;
+    public static ToDoList fromJSON(JSONObject jsonObject) {
+        String listTitle = jsonObject.getString("listTitle");
+
+        List<Task> allTasks = new ArrayList<>();
+        JSONArray allTasksArray = jsonObject.getJSONArray("allTasks");
+        for (int i = 0; i < allTasksArray.length(); i++) {
+            allTasks.add(Task.fromJSON(allTasksArray.getJSONObject(i)));
+        }
+
+        List<Task> completedTasks = new ArrayList<>();
+        JSONArray completedTasksArray = jsonObject.getJSONArray("completedTasks");
+        for (int i = 0; i < completedTasksArray.length(); i++) {
+            completedTasks.add(Task.fromJSON(completedTasksArray.getJSONObject(i)));
+        }
+
+        List<Task> displayTaskList = new ArrayList<>();
+        JSONArray displayTaskListArray = jsonObject.getJSONArray("displayTaskList");
+        for (int i = 0; i < displayTaskListArray.length(); i++) {
+            displayTaskList.add(Task.fromJSON(displayTaskListArray.getJSONObject(i)));
+        }
+
+        double completionPercentage = jsonObject.getDouble("completionPercentage");
+        ListCategory listCategory = ListCategory.valueOf(jsonObject.getString("listCategory"));
+        SortingOptions sortingOptions = SortingOptions.UNCATEGORIZED;
+        if (jsonObject.has("sortingOptions")) {
+            sortingOptions = SortingOptions.valueOf(jsonObject.getString("sortingOptions"));
+        } else {
+            sortingOptions = SortingOptions.UNCATEGORIZED;
+        }
+        String listColor = jsonObject.getString("listColor");
+
+        return new ToDoList(listTitle, allTasks, completedTasks, listCategory, completionPercentage, listColor, sortingOptions, displayTaskList);
     }
 }
