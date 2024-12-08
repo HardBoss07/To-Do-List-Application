@@ -57,8 +57,14 @@ public class ToDoList {
 
     public void sortList() {
         SortTasks sortTasks = new SortTasks(this.sortingOptions);
+        if (this.sortingOptions == null) this.sortingOptions = SortingOptions.UNCATEGORIZED;
         displayTaskList = sortTasks.sortTasks(allTasks);
         System.out.println("Sorted " + allTasks + " to " + displayTaskList + " with " + sortingOptions.toFormattedString());
+    }
+
+    public void addTask(Task task) {
+        allTasks.add(task);
+        sortList();
     }
 
     // BASE METHODS

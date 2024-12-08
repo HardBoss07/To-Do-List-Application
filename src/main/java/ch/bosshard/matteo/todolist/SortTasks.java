@@ -19,11 +19,13 @@ public class SortTasks {
     private List<Task> bucket6 = new ArrayList<>();
 
     public SortTasks(SortingOptions selectedSortingOption) {
+        if (selectedSortingOption == null) this.selectedSortingOption = SortingOptions.UNCATEGORIZED;
         this.selectedSortingOption = selectedSortingOption;
     }
 
     public List<Task> sortTasks(List<Task> list) {
         outList = list;
+        if (selectedSortingOption == null) selectedSortingOption = SortingOptions.UNCATEGORIZED;
         switch (selectedSortingOption) {
             case CATEGORIZED -> outList = categorized(list);
             case UNCATEGORIZED -> outList = uncategorized(list);
@@ -31,6 +33,7 @@ public class SortTasks {
             case STATUS_LOW_TO_HIGH -> outList = status(list, false);
             case IMPORTANCE_HIGH_TO_LOW -> outList = importance(list, false);
             case IMPORTANCE_LOW_TO_HIGH -> outList = importance(list, true);
+            default -> outList = uncategorized(list);
         }
 
         return outList;

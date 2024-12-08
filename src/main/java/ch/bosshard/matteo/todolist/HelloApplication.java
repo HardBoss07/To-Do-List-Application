@@ -116,6 +116,8 @@ public class HelloApplication extends Application {
         Label taskStatusLabel = new Label(list.getAllTasks().isEmpty() ? "No current tasks" : "Current Tasks (" + list.getAllTasks().size() + "):");
         taskStatusLabel.getStyleClass().add("list-detail");
 
+        VBox tasksVBox = new VBox(10);
+
         EnumStringConverter<SortingOptions> converter = new EnumStringConverter<>();
         ComboBox<SortingOptions> sortingComboBox = new ComboBox<SortingOptions>();
         sortingComboBox.setPromptText("Sort By:");
@@ -129,6 +131,8 @@ public class HelloApplication extends Application {
             sortingComboBox.setConverter(converter);
             list.setSortingOptions(sortingComboBox.getValue());
             list.sortList();
+            tasksVBox.getChildren().clear();
+            tasksVBox.getChildren().addAll(updateTaskList(stage, list).getChildren());
         });
 
         sortingComboBox.setCellFactory(comboBox -> new ListCell<>() {
@@ -152,7 +156,6 @@ public class HelloApplication extends Application {
         statusHBox.setSpacing(5);
         statusHBox.setPadding(new Insets(0, 10, 0, 0));
 
-        VBox tasksVBox = new VBox(10);
         for (Task task : list.getDisplayTaskList()) {
             tasksVBox.getChildren().add(createTaskObject(task, stage, list));
         }
@@ -166,6 +169,15 @@ public class HelloApplication extends Application {
         Scene listDetailScene = new Scene(layout, 350, 600);
         listDetailScene.getStylesheets().add(mainScene.getStylesheets().getFirst());
         stage.setScene(listDetailScene);
+    }
+
+    private VBox updateTaskList(Stage stage, ToDoList list) {
+        VBox vBox = new VBox(10);
+        for (Task task : list.getDisplayTaskList()) {
+            vBox.getChildren().add(createTaskObject(task, stage, list));
+        }
+
+        return vBox;
     }
 
     // Create the list creation popup
@@ -403,7 +415,7 @@ public class HelloApplication extends Application {
                 showAlert("Error", "Please fill in all fields!");
             } else {
                 Task newTask = new Task(taskName, status, category, importance);
-                list.getAllTasks().add(newTask);
+                list.addTask(newTask);
 
                 showListDetail(stage, list);
                 popupStage.close();
