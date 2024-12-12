@@ -1,5 +1,11 @@
 package ch.bosshard.matteo.todolist;
 
+/**
+ * EnumStringConverter.java
+ * @author Matteo Bosshard
+ * @version 12.12.2024
+ **/
+
 import javafx.util.StringConverter;
 
 public class EnumStringConverter<T extends Enum<T>> extends StringConverter<T> {

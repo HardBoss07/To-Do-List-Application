@@ -1,5 +1,11 @@
 package ch.bosshard.matteo.todolist.enums;
 
+/**
+ * TaskStatus.java
+ * @author Matteo Bosshard
+ * @version 12.12.2024
+ **/
+
 public enum TaskStatus {
     NOT_STARTED,
     IN_PROGRESS,

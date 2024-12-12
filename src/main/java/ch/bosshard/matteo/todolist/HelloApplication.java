@@ -1,5 +1,11 @@
 package ch.bosshard.matteo.todolist;
 
+/**
+ * HelloApplication.java
+ * @author Matteo Bosshard
+ * @version 12.12.2024
+ **/
+
 import ch.bosshard.matteo.todolist.enums.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;

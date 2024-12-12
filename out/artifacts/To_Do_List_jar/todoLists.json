@@ -1,0 +1,20 @@
+[{
+  "listTitle": "New List yay",
+  "listCategory": "PROFESSIONAL",
+  "completionPercentage": 0,
+  "completedTasks": [],
+  "allTasks": [{
+    "taskImportance": "OPTIONAL",
+    "taskName": "task11",
+    "taskStatus": "IN_PROGRESS",
+    "taskCategory": "HOUSEHOLD"
+  }],
+  "sortingOptions": "UNCATEGORIZED",
+  "displayTaskList": [{
+    "taskImportance": "OPTIONAL",
+    "taskName": "task11",
+    "taskStatus": "IN_PROGRESS",
+    "taskCategory": "HOUSEHOLD"
+  }],
+  "listColor": "#457B9D"
+}]

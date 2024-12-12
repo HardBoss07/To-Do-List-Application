@@ -1,5 +1,11 @@
 package ch.bosshard.matteo.todolist.enums;
 
+/**
+ * SortingOptions.java
+ * @author Matteo Bosshard
+ * @version 12.12.2024
+ **/
+
 public enum SortingOptions {
     UNCATEGORIZED,
     CATEGORIZED,

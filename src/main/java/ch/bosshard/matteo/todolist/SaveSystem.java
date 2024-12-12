@@ -1,5 +1,11 @@
 package ch.bosshard.matteo.todolist;
 
+/**
+ * SaveSystem.java
+ * @author Matteo Bosshard
+ * @version 12.12.2024
+ **/
+
 import org.json.JSONArray;
 import java.io.FileReader;
 import java.io.FileWriter;

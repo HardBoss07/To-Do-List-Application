@@ -1,5 +1,11 @@
 package ch.bosshard.matteo.todolist;
 
+/**
+ * ToDoList.java
+ * @author Matteo Bosshard
+ * @version 12.12.2024
+ **/
+
 import ch.bosshard.matteo.todolist.enums.ListCategory;
 import ch.bosshard.matteo.todolist.enums.SortingOptions;
 import ch.bosshard.matteo.todolist.enums.TaskStatus;

@@ -1,0 +1,49 @@
+[{
+  "listTitle": "a",
+  "listCategory": "MONTHLY",
+  "completionPercentage": 100,
+  "completedTasks": [
+    {
+      "taskImportance": "MEDIUM",
+      "taskName": "ta1",
+      "taskStatus": "COMPLETED",
+      "taskCategory": "GARDEN"
+    },
+    {
+      "taskImportance": "LOW",
+      "taskName": "ta2",
+      "taskStatus": "COMPLETED",
+      "taskCategory": "GARDEN"
+    }
+  ],
+  "allTasks": [
+    {
+      "taskImportance": "MEDIUM",
+      "taskName": "ta1",
+      "taskStatus": "COMPLETED",
+      "taskCategory": "GARDEN"
+    },
+    {
+      "taskImportance": "LOW",
+      "taskName": "ta2",
+      "taskStatus": "COMPLETED",
+      "taskCategory": "GARDEN"
+    }
+  ],
+  "sortingOptions": "UNCATEGORIZED",
+  "displayTaskList": [
+    {
+      "taskImportance": "LOW",
+      "taskName": "ta2",
+      "taskStatus": "COMPLETED",
+      "taskCategory": "GARDEN"
+    },
+    {
+      "taskImportance": "MEDIUM",
+      "taskName": "ta1",
+      "taskStatus": "COMPLETED",
+      "taskCategory": "GARDEN"
+    }
+  ],
+  "listColor": "#E9C46A"
+}]

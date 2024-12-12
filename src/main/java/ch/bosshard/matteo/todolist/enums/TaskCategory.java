@@ -1,5 +1,11 @@
 package ch.bosshard.matteo.todolist.enums;
 
+/**
+ * TaskCategory.java
+ * @author Matteo Bosshard
+ * @version 12.12.2024
+ **/
+
 public enum TaskCategory {
     WORK,
     HOUSEHOLD,
